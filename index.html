@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>💪 Strength Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body { background: #0f172a; }
+    .screen { display: none; min-height: calc(100vh - 4rem); padding-bottom: 5.5rem; overflow-y: auto; }
+    .screen.active { display: block; }
+    input[type=number] { -moz-appearance: textfield; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .nav-item.active { color: #818cf8; }
+    .exercise-card { border: 2px solid transparent; transition: border-color 0.15s, background 0.15s; }
+    .exercise-card.selected { border-color: #6366f1; background: #1e1b4b; }
+
+    /* 2-frame animation to simulate motion */
+    .ex-wrap { position: relative; aspect-ratio: 4/3; background: #1e293b; overflow: hidden; }
+    .ex-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .ex-frame-0 { animation: frameA 2s steps(1, end) infinite; }
+    .ex-frame-1 { animation: frameB 2s steps(1, end) infinite; }
+    @keyframes frameA { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    @keyframes frameB { 0%,49%{opacity:0} 50%,100%{opacity:1} }
+    .ex-wrap.failed .ex-frame-0,
+    .ex-wrap.failed .ex-frame-1 { display: none; }
+    .ex-wrap .ex-label {
+      display: none; position: absolute; inset: 0;
+      align-items: center; justify-content: center;
+      color: #64748b; font-size: 11px; text-align: center; padding: 6px;
+    }
+    .ex-wrap.failed .ex-label { display: flex; }
+
+    /* Inline thumbnail in set-log header */
+    .ex-thumb-wrap { position: relative; width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: #1e293b; flex-shrink: 0; }
+    .ex-thumb-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  </style>
+</head>
+<body class="text-white max-w-md mx-auto relative">
+
+<!-- ── HOME ─────────────────────────────────────────────── -->
+<div id="screen-home" class="screen active px-4 pt-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">💪 Strength Tracker</h1>
+    <span id="today-date" class="text-gray-400 text-sm"></span>
+  </div>
+
+  <button onclick="startWorkout()"
+    class="w-full bg-indigo-600 active:bg-indigo-700 text-white font-bold py-5 rounded-2xl text-lg mb-5">
+    + Start Today's Workout
+  </button>
+
+  <div class="bg-gray-900 rounded-2xl p-4 mb-5">
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Today's Body Weight</h2>
+    <div class="flex gap-3">
+      <input type="number" id="bw-quick" placeholder="kg" step="0.1"
+        class="flex-1 bg-gray-800 rounded-xl px-4 py-3 text-white text-lg text-center outline-none focus:ring-2 focus:ring-indigo-500">
+      <button onclick="quickLogWeight()"
+        class="bg-indigo-600 active:bg-indigo-700 px-5 rounded-xl font-bold text-sm">Log</button>
+    </div>
+    <div id="bw-last-home" class="text-xs text-gray-500 mt-2 text-center"></div>
+  </div>
+
+  <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Recent Sessions</h2>
+  <div id="recent-sessions" class="space-y-3"></div>
+</div>
+
+<!-- ── LOG ──────────────────────────────────────────────── -->
+<div id="screen-log" class="screen px-4 pt-6">
+
+  <!-- Step 1: Pick exercises -->
+  <div id="log-step-pick">
+    <div class="flex items-center gap-3 mb-2">
+      <button onclick="showScreen('home')" class="text-gray-400 p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h1 class="text-xl font-bold">Select Exercises</h1>
+    </div>
+    <p class="text-gray-400 text-sm mb-5 ml-9">Tap to select, tap again to deselect</p>
+
+    <h3 class="text-xs font-semibold text-indigo-400 uppercase tracking-wide mb-3">🦵 Legs</h3>
+    <div id="leg-exercises" class="grid grid-cols-2 gap-3 mb-5"></div>
+
+    <h3 class="text-xs font-semibold text-indigo-400 uppercase tracking-wide mb-3">💪 Upper Body</h3>
+    <div id="upper-exercises" class="grid grid-cols-2 gap-3 mb-5"></div>
+
+    <div id="pick-summary" class="text-center text-sm text-gray-400 mb-3"></div>
+    <button id="start-log-btn" onclick="startLogging()"
+      class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl text-lg mb-6 opacity-40 cursor-not-allowed"
+      disabled>
+      Start Logging →
+    </button>
+  </div>
+
+  <!-- Step 2: Log sets -->
+  <div id="log-step-sets" style="display:none">
+    <div class="flex items-center gap-3 mb-5">
+      <button onclick="backToPick()" class="text-gray-400 p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h1 class="text-xl font-bold">Log Sets</h1>
+    </div>
+    <div id="exercise-set-cards" class="space-y-4 mb-5"></div>
+    <button onclick="saveWorkout()"
+      class="w-full bg-green-600 active:bg-green-700 text-white font-bold py-4 rounded-2xl text-lg mb-6">
+      ✅ Save Workout
+    </button>
+  </div>
+</div>
+
+<!-- ── WEIGHT ─────────────────────────────────────────────── -->
+<div id="screen-weight" class="screen px-4 pt-6">
+  <h1 class="text-2xl font-bold mb-5">⚖️ Body Weight</h1>
+
+  <div class="bg-gray-900 rounded-2xl p-4 mb-5">
+    <div class="flex gap-2">
+      <input type="date" id="bw-date"
+        class="flex-1 bg-gray-800 rounded-xl px-3 py-3 text-white text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+      <input type="number" id="bw-weight" placeholder="kg" step="0.1"
+        class="w-20 bg-gray-800 rounded-xl px-2 py-3 text-white text-center outline-none focus:ring-2 focus:ring-indigo-500">
+      <button onclick="addWeight()"
+        class="bg-indigo-600 active:bg-indigo-700 px-4 rounded-xl font-bold">＋</button>
+    </div>
+  </div>
+
+  <div class="bg-gray-900 rounded-2xl p-4 mb-5">
+    <div id="weight-chart-wrap"><canvas id="weight-chart"></canvas></div>
+    <div id="weight-chart-empty" class="text-center text-gray-500 text-sm py-6 hidden">Log 2+ entries to see the chart</div>
+  </div>
+
+  <div id="weight-list" class="space-y-2"></div>
+</div>
+
+<!-- ── HISTORY ─────────────────────────────────────────────── -->
+<div id="screen-history" class="screen px-4 pt-6">
+  <h1 class="text-2xl font-bold mb-5">📋 History</h1>
+  <div id="history-list" class="space-y-4"></div>
+</div>
+
+<!-- ── BOTTOM NAV ─────────────────────────────────────────── -->
+<nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-gray-900 border-t border-gray-800 flex z-50">
+  <button onclick="showScreen('home')" class="nav-item flex-1 flex flex-col items-center py-3 text-gray-500 text-xs gap-1" data-screen="home">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+    </svg>
+    Home
+  </button>
+  <button onclick="showScreen('log')" class="nav-item flex-1 flex flex-col items-center py-3 text-gray-500 text-xs gap-1" data-screen="log">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+    </svg>
+    Log
+  </button>
+  <button onclick="showScreen('weight')" class="nav-item flex-1 flex flex-col items-center py-3 text-gray-500 text-xs gap-1" data-screen="weight">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+    </svg>
+    Weight
+  </button>
+  <button onclick="showScreen('history')" class="nav-item flex-1 flex flex-col items-center py-3 text-gray-500 text-xs gap-1" data-screen="history">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    History
+  </button>
+</nav>
+
+<script>
+const IMG = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
+
+const EXERCISES = [
+  // LEGS
+  { id:'squat',       en:'Barbell Squat',          zh:'深蹲',         muscle:'legs',  img:'Barbell_Squat' },
+  { id:'legpress',    en:'Leg Press',               zh:'腿部推舉',     muscle:'legs',  img:'Leg_Press' },
+  { id:'rdl',         en:'Romanian Deadlift',       zh:'羅馬尼亞硬舉', muscle:'legs',  img:'Romanian_Deadlift' },
+  { id:'legcurl',     en:'Leg Curl',                zh:'腿彎舉',       muscle:'legs',  img:'Lying_Leg_Curls' },
+  { id:'legext',      en:'Leg Extension',           zh:'腿伸展',       muscle:'legs',  img:'Leg_Extensions' },
+  { id:'hipthrust',   en:'Hip Thrust',              zh:'臀推',         muscle:'legs',  img:'Barbell_Hip_Thrust' },
+  { id:'lunge',       en:'Lunge',                   zh:'弓步蹲',       muscle:'legs',  img:'Barbell_Walking_Lunge' },
+  { id:'calfraise',   en:'Calf Raise',              zh:'提踵',         muscle:'legs',  img:'Standing_Calf_Raises' },
+  { id:'sumosquat',   en:'Sumo Squat',              zh:'相撲深蹲',     muscle:'legs',  img:'Sumo_Squat' },
+  { id:'goblet',      en:'Goblet Squat',            zh:'酒杯深蹲',     muscle:'legs',  img:'Goblet_Squat' },
+  // UPPER
+  { id:'bench',       en:'Bench Press',             zh:'臥推',         muscle:'upper', img:'Barbell_Bench_Press_-_Medium_Grip' },
+  { id:'incline',     en:'Incline Bench Press',     zh:'上斜臥推',     muscle:'upper', img:'Barbell_Incline_Bench_Press_-_Medium_Grip' },
+  { id:'ohp',         en:'Overhead Press',          zh:'肩上推舉',     muscle:'upper', img:'Barbell_Shoulder_Press' },
+  { id:'pullup',      en:'Pull Up',                 zh:'引體向上',     muscle:'upper', img:'Band_Assisted_Pull-Up' },
+  { id:'pulldown',    en:'Lat Pulldown',            zh:'滑輪下拉',     muscle:'upper', img:'Pulldown' },
+  { id:'bbrow',       en:'Barbell Row',             zh:'槓鈴划船',     muscle:'upper', img:'Bent_Over_Barbell_Row' },
+  { id:'dbrow',       en:'Dumbbell Row',            zh:'啞鈴划船',     muscle:'upper', img:'One_Arm_Dumbbell_Row' },
+  { id:'curl',        en:'Bicep Curl',              zh:'二頭彎舉',     muscle:'upper', img:'Barbell_Curl' },
+  { id:'tricep',      en:'Tricep Pushdown',         zh:'三頭下壓',     muscle:'upper', img:'Triceps_Pushdown' },
+  { id:'lateral',     en:'Lateral Raise',           zh:'側平舉',       muscle:'upper', img:'Dumbbell_Lateral_Raise' },
+  { id:'cablefly',    en:'Cable Fly',               zh:'繩索夾胸',     muscle:'upper', img:'Cable_Fly' },
+  { id:'facepull',    en:'Face Pull',               zh:'臉拉',         muscle:'upper', img:'Face_Pull' },
+  { id:'straightarm', en:'Straight Arm Pulldown',   zh:'直臂下壓',     muscle:'upper', img:'Straight-Arm_Pulldown' },
+];
+
+// ── STORAGE ───────────────────────────────────────────────
+const DB = {
+  getSessions:  () => JSON.parse(localStorage.getItem('st_sessions')    || '[]'),
+  saveSessions: v  => localStorage.setItem('st_sessions',    JSON.stringify(v)),
+  getWeights:   () => JSON.parse(localStorage.getItem('st_bodyweights') || '[]'),
+  saveWeights:  v  => localStorage.setItem('st_bodyweights', JSON.stringify(v)),
+};
+
+let selectedExercises = [];
+let weightChart = null;
+
+// ── NAVIGATION ────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelector(`.nav-item[data-screen="${name}"]`)?.classList.add('active');
+  if (name === 'home')    renderHome();
+  if (name === 'weight')  renderWeightScreen();
+  if (name === 'history') renderHistory();
+  if (name === 'log')     renderPicker();
+}
+
+// ── EXERCISE IMAGE HELPER ─────────────────────────────────
+function exWrap(e, classes = '') {
+  return `
+    <div class="ex-wrap ${classes}" id="wrap-${e.id}">
+      <img class="ex-frame-0" src="${IMG}${e.img}/0.jpg"
+           onerror="document.getElementById('wrap-${e.id}').classList.add('failed')">
+      <img class="ex-frame-1" src="${IMG}${e.img}/1.jpg" onerror="">
+      <div class="ex-label">${e.zh}</div>
+    </div>`;
+}
+
+function thumbWrap(e) {
+  return `
+    <div class="ex-thumb-wrap" id="thumb-${e.id}">
+      <img class="ex-frame-0" src="${IMG}${e.img}/0.jpg"
+           onerror="document.getElementById('thumb-${e.id}').style.background='#1e293b'">
+      <img class="ex-frame-1" src="${IMG}${e.img}/1.jpg" onerror="">
+    </div>`;
+}
+
+// ── HOME ──────────────────────────────────────────────────
+function renderHome() {
+  document.getElementById('today-date').textContent =
+    new Date().toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+
+  const weights = DB.getWeights();
+  const lastBw  = weights.length ? weights[weights.length - 1] : null;
+  document.getElementById('bw-last-home').textContent =
+    lastBw ? `Last logged: ${lastBw.weight} kg (${lastBw.date})` : '';
+
+  const sessions = DB.getSessions().slice(-5).reverse();
+  const el = document.getElementById('recent-sessions');
+  if (!sessions.length) {
+    el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No sessions yet — start your first workout!</p>';
+    return;
+  }
+  el.innerHTML = sessions.map(s => `
+    <div class="bg-gray-900 rounded-2xl p-4">
+      <div class="flex justify-between items-center mb-1">
+        <span class="font-semibold">${s.date}</span>
+        <span class="text-xs text-gray-400">${s.exercises.length} exercises</span>
+      </div>
+      <div class="text-sm text-gray-400">${s.exercises.map(e => e.zh).join(' · ')}</div>
+    </div>`).join('');
+}
+
+function quickLogWeight() {
+  const val = parseFloat(document.getElementById('bw-quick').value);
+  if (!val || val <= 0) return;
+  saveWeightEntry(new Date().toISOString().split('T')[0], val);
+  document.getElementById('bw-quick').value = '';
+  renderHome();
+  showToast('Body weight logged ✅');
+}
+
+// ── EXERCISE PICKER ───────────────────────────────────────
+function startWorkout() {
+  selectedExercises = [];
+  showScreen('log');
+}
+
+function renderPicker() {
+  const legs  = EXERCISES.filter(e => e.muscle === 'legs');
+  const upper = EXERCISES.filter(e => e.muscle === 'upper');
+  document.getElementById('leg-exercises').innerHTML   = legs.map(exerciseCard).join('');
+  document.getElementById('upper-exercises').innerHTML = upper.map(exerciseCard).join('');
+  document.getElementById('log-step-pick').style.display = 'block';
+  document.getElementById('log-step-sets').style.display = 'none';
+  updatePickSummary();
+}
+
+function exerciseCard(e) {
+  const sel = selectedExercises.some(s => s.id === e.id);
+  return `
+    <div class="exercise-card ${sel ? 'selected' : ''} bg-gray-900 rounded-2xl overflow-hidden cursor-pointer"
+         onclick="toggleExercise('${e.id}')">
+      <div class="relative">
+        ${exWrap(e)}
+        ${sel ? '<div class="absolute top-2 right-2 bg-indigo-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow z-10">✓</div>' : ''}
+      </div>
+      <div class="p-2">
+        <div class="font-semibold text-sm leading-tight">${e.zh}</div>
+        <div class="text-xs text-gray-400 mt-0.5">${e.en}</div>
+      </div>
+    </div>`;
+}
+
+function toggleExercise(id) {
+  const ex  = EXERCISES.find(e => e.id === id);
+  const idx = selectedExercises.findIndex(e => e.id === id);
+  if (idx > -1) selectedExercises.splice(idx, 1);
+  else selectedExercises.push(ex);
+  renderPicker();
+}
+
+function updatePickSummary() {
+  const total = selectedExercises.length;
+  const ready = total >= 1;
+  const btn = document.getElementById('start-log-btn');
+  const sum = document.getElementById('pick-summary');
+  sum.textContent = total ? `${total} exercise${total > 1 ? 's' : ''} selected` : 'Select at least 1 exercise';
+  sum.className   = `text-center text-sm mb-3 ${ready ? 'text-green-400' : 'text-gray-400'}`;
+  btn.disabled    = !ready;
+  btn.classList.toggle('opacity-40', !ready);
+  btn.classList.toggle('cursor-not-allowed', !ready);
+}
+
+// ── SET LOGGING ───────────────────────────────────────────
+function startLogging() {
+  document.getElementById('log-step-pick').style.display = 'none';
+  document.getElementById('log-step-sets').style.display = 'block';
+
+  document.getElementById('exercise-set-cards').innerHTML = selectedExercises.map(e => `
+    <div class="bg-gray-900 rounded-2xl overflow-hidden">
+      <div class="flex items-center gap-3 p-3 border-b border-gray-800">
+        ${thumbWrap(e)}
+        <div>
+          <div class="font-semibold">${e.zh}</div>
+          <div class="text-xs text-gray-400">${e.en}</div>
+        </div>
+      </div>
+      <div class="p-3">
+        <div class="grid grid-cols-3 gap-2 text-xs text-gray-500 text-center mb-2">
+          <span>Set</span><span>Reps</span><span>Weight (kg)</span>
+        </div>
+        ${[1,2,3].map(i => `
+          <div class="grid grid-cols-3 gap-2 mb-2">
+            <div class="bg-gray-800 rounded-xl py-2.5 text-center text-sm font-bold text-indigo-400">Set ${i}</div>
+            <input type="number" id="${e.id}-reps-${i}" placeholder="reps" min="0"
+              class="bg-gray-800 rounded-xl py-2.5 text-center text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+            <input type="number" id="${e.id}-kg-${i}" placeholder="kg" min="0" step="0.5"
+              class="bg-gray-800 rounded-xl py-2.5 text-center text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-full">
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function backToPick() {
+  document.getElementById('log-step-pick').style.display = 'block';
+  document.getElementById('log-step-sets').style.display = 'none';
+}
+
+function saveWorkout() {
+  const date = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+  const session = {
+    date,
+    timestamp: Date.now(),
+    exercises: selectedExercises.map(e => ({
+      id: e.id, en: e.en, zh: e.zh,
+      sets: [1,2,3].map(i => ({
+        reps:   parseInt(document.getElementById(`${e.id}-reps-${i}`)?.value)   || 0,
+        weight: parseFloat(document.getElementById(`${e.id}-kg-${i}`)?.value) || 0,
+      }))
+    }))
+  };
+  const sessions = DB.getSessions();
+  sessions.push(session);
+  DB.saveSessions(sessions);
+  selectedExercises = [];
+  showToast('Workout saved 🎉');
+  showScreen('home');
+}
+
+// ── BODY WEIGHT ───────────────────────────────────────────
+function renderWeightScreen() {
+  document.getElementById('bw-date').value = new Date().toISOString().split('T')[0];
+
+  const weights = DB.getWeights().sort((a, b) => a.date.localeCompare(b.date));
+  const wrap    = document.getElementById('weight-chart-wrap');
+  const empty   = document.getElementById('weight-chart-empty');
+
+  if (weights.length < 2) {
+    wrap.style.display = 'none';
+    empty.classList.remove('hidden');
+  } else {
+    wrap.style.display = 'block';
+    empty.classList.add('hidden');
+    if (weightChart) weightChart.destroy();
+    const recent = weights.slice(-20);
+    weightChart = new Chart(document.getElementById('weight-chart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: recent.map(b => b.date.slice(5)),
+        datasets: [{
+          data: recent.map(b => b.weight),
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99,102,241,0.12)',
+          tension: 0.3, fill: true,
+          pointBackgroundColor: '#6366f1', pointRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color:'#94a3b8', font:{size:11} }, grid: { color:'#1e293b' } },
+          y: { ticks: { color:'#94a3b8', font:{size:11} }, grid: { color:'#1e293b' } }
+        }
+      }
+    });
+  }
+
+  document.getElementById('weight-list').innerHTML =
+    weights.slice().reverse().slice(0, 15).map(b => `
+      <div class="flex justify-between items-center bg-gray-900 rounded-xl px-4 py-3">
+        <span class="text-gray-300 text-sm">${b.date}</span>
+        <div class="flex items-center gap-4">
+          <span class="font-bold">${b.weight} <span class="text-gray-400 text-sm font-normal">kg</span></span>
+          <button onclick="deleteWeight('${b.date}')" class="text-gray-600 hover:text-red-400 text-xs">✕</button>
+        </div>
+      </div>`).join('')
+    || '<p class="text-gray-500 text-sm text-center py-8">No weight entries yet</p>';
+}
+
+function addWeight() {
+  const date   = document.getElementById('bw-date').value;
+  const weight = parseFloat(document.getElementById('bw-weight').value);
+  if (!date || !weight || weight <= 0) return;
+  saveWeightEntry(date, weight);
+  document.getElementById('bw-weight').value = '';
+  renderWeightScreen();
+}
+
+function saveWeightEntry(date, weight) {
+  const weights = DB.getWeights();
+  const idx = weights.findIndex(b => b.date === date);
+  if (idx > -1) weights[idx].weight = weight;
+  else weights.push({ date, weight });
+  DB.saveWeights(weights);
+}
+
+function deleteWeight(date) {
+  DB.saveWeights(DB.getWeights().filter(b => b.date !== date));
+  renderWeightScreen();
+}
+
+// ── HISTORY ───────────────────────────────────────────────
+function renderHistory() {
+  const sessions = DB.getSessions().slice().reverse();
+  const el = document.getElementById('history-list');
+  if (!sessions.length) {
+    el.innerHTML = '<p class="text-gray-500 text-sm text-center py-10">No sessions yet</p>';
+    return;
+  }
+  el.innerHTML = sessions.map((s, i) => `
+    <div class="bg-gray-900 rounded-2xl overflow-hidden">
+      <button onclick="toggleHistory(${i})" class="w-full flex justify-between items-center p-4 text-left">
+        <div>
+          <div class="font-semibold">${s.date}</div>
+          <div class="text-sm text-gray-400 mt-0.5">${s.exercises.map(e => e.zh).join(' · ')}</div>
+        </div>
+        <svg id="hist-arrow-${i}" class="w-5 h-5 text-gray-500 transition-transform flex-shrink-0"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div id="hist-detail-${i}" class="hidden border-t border-gray-800 p-4 space-y-4">
+        ${s.exercises.map(e => `
+          <div>
+            <div class="text-sm font-semibold mb-2">
+              ${e.zh} <span class="text-gray-500 font-normal text-xs">${e.en}</span>
+            </div>
+            ${e.sets.map((set, j) => `
+              <div class="flex gap-4 text-sm text-gray-300 ml-2 mb-1">
+                <span class="text-indigo-400 w-12">Set ${j+1}</span>
+                <span>${set.reps} reps</span>
+                <span>${set.weight} kg</span>
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function toggleHistory(i) {
+  const detail = document.getElementById(`hist-detail-${i}`);
+  const arrow  = document.getElementById(`hist-arrow-${i}`);
+  detail.classList.toggle('hidden');
+  arrow.style.transform = detail.classList.contains('hidden') ? '' : 'rotate(180deg)';
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'fixed top-5 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-5 py-3 rounded-full text-sm font-semibold shadow-xl z-50';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.transition='opacity 0.3s'; t.style.opacity='0'; setTimeout(() => t.remove(), 300); }, 2000);
+}
+
+showScreen('home');
+</script>
+</body>
+</html>
