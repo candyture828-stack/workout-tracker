@@ -18,25 +18,20 @@
     .exercise-card { border: 2px solid transparent; transition: border-color 0.15s, background 0.15s; }
     .exercise-card.selected { border-color: #6366f1; background: #1e1b4b; }
 
-    /* 2-frame animation to simulate motion */
+    /* Static exercise image */
     .ex-wrap { position: relative; aspect-ratio: 4/3; background: #1e293b; overflow: hidden; }
-    .ex-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .ex-frame-0 { animation: frameA 2s steps(1, end) infinite; }
-    .ex-frame-1 { animation: frameB 2s steps(1, end) infinite; }
-    @keyframes frameA { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-    @keyframes frameB { 0%,49%{opacity:0} 50%,100%{opacity:1} }
-    .ex-wrap.failed .ex-frame-0,
-    .ex-wrap.failed .ex-frame-1 { display: none; }
+    .ex-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ex-wrap.failed img { display: none; }
     .ex-wrap .ex-label {
       display: none; position: absolute; inset: 0;
       align-items: center; justify-content: center;
-      color: #64748b; font-size: 11px; text-align: center; padding: 6px;
+      color: #64748b; font-size: 11px; text-align: center; padding: 8px; line-height: 1.4;
     }
     .ex-wrap.failed .ex-label { display: flex; }
 
     /* Inline thumbnail in set-log header */
-    .ex-thumb-wrap { position: relative; width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: #1e293b; flex-shrink: 0; }
-    .ex-thumb-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .ex-thumb-wrap { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: #1e293b; flex-shrink: 0; }
+    .ex-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
   </style>
 </head>
 <body class="text-white max-w-md mx-auto relative">
@@ -144,6 +139,44 @@
   <div id="history-list" class="space-y-4"></div>
 </div>
 
+<!-- ── TIPS ──────────────────────────────────────────────── -->
+<div id="screen-tips" class="screen px-4 pt-6">
+  <div class="flex items-center gap-3 mb-5">
+    <button onclick="showScreen('log')" class="text-gray-400 p-1">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <h1 class="text-xl font-bold">Exercise Tips <span class="text-gray-500 font-normal text-base">運動提示</span></h1>
+  </div>
+  <div id="tips-content"></div>
+</div>
+
+<!-- ── ACTION SHEET ───────────────────────────────────────── -->
+<div id="modal-action" class="hidden fixed inset-0 z-50 flex items-end max-w-md mx-auto">
+  <div class="absolute inset-0 bg-black/60" onclick="closeModal()"></div>
+  <div class="relative w-full bg-gray-900 rounded-t-3xl p-5 pb-8">
+    <div class="flex items-center gap-4 mb-5">
+      <div class="ex-thumb-wrap"><img id="modal-img" src="" alt="" onerror="this.style.display='none'"></div>
+      <div>
+        <div id="modal-zh" class="font-bold text-lg leading-tight"></div>
+        <div id="modal-en" class="text-gray-400 text-sm mt-0.5"></div>
+      </div>
+    </div>
+    <button id="modal-tips-btn" onclick="goToTips()"
+      class="w-full bg-indigo-950 border border-indigo-800 text-indigo-300 font-semibold py-4 rounded-2xl mb-3 flex items-center gap-3 px-5">
+      <span class="text-xl">💡</span>
+      <span>Tips <span class="text-indigo-500 font-normal text-sm">運動提示</span></span>
+    </button>
+    <button id="modal-log-btn" onclick="modalToggleExercise()"
+      class="w-full bg-green-950 border border-green-800 text-green-300 font-semibold py-4 rounded-2xl flex items-center gap-3 px-5">
+      <span class="text-xl">✏️</span>
+      <span id="modal-log-label">Add to Workout <span class="text-green-500 font-normal text-sm">加入訓練</span></span>
+    </button>
+    <button onclick="closeModal()" class="w-full text-gray-500 py-3 mt-1 text-sm">Cancel</button>
+  </div>
+</div>
+
 <!-- ── BOTTOM NAV ─────────────────────────────────────────── -->
 <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-gray-900 border-t border-gray-800 flex z-50">
   <button onclick="showScreen('home')" class="nav-item flex-1 flex flex-col items-center py-3 text-gray-500 text-xs gap-1" data-screen="home">
@@ -177,30 +210,139 @@ const IMG = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exe
 
 const EXERCISES = [
   // LEGS
-  { id:'squat',       en:'Barbell Squat',          zh:'深蹲',         muscle:'legs',  img:'Barbell_Squat' },
-  { id:'legpress',    en:'Leg Press',               zh:'腿部推舉',     muscle:'legs',  img:'Leg_Press' },
-  { id:'rdl',         en:'Romanian Deadlift',       zh:'羅馬尼亞硬舉', muscle:'legs',  img:'Romanian_Deadlift' },
-  { id:'legcurl',     en:'Leg Curl',                zh:'腿彎舉',       muscle:'legs',  img:'Lying_Leg_Curls' },
-  { id:'legext',      en:'Leg Extension',           zh:'腿伸展',       muscle:'legs',  img:'Leg_Extensions' },
-  { id:'hipthrust',   en:'Hip Thrust',              zh:'臀推',         muscle:'legs',  img:'Barbell_Hip_Thrust' },
-  { id:'lunge',       en:'Lunge',                   zh:'弓步蹲',       muscle:'legs',  img:'Barbell_Walking_Lunge' },
-  { id:'calfraise',   en:'Calf Raise',              zh:'提踵',         muscle:'legs',  img:'Standing_Calf_Raises' },
-  { id:'sumosquat',   en:'Sumo Squat',              zh:'相撲深蹲',     muscle:'legs',  img:'Sumo_Squat' },
-  { id:'goblet',      en:'Goblet Squat',            zh:'酒杯深蹲',     muscle:'legs',  img:'Goblet_Squat' },
+  {
+    id:'backsquat', en:'Back Squat', zh:'背槓深蹲', muscle:'legs', img:'Barbell_Squat',
+    tips:[
+      { en:'Feet shoulder-width apart, toes turned slightly out (15–30°).', zh:'雙腳與肩同寬，腳尖略向外轉（15–30度）。' },
+      { en:'Brace your core and take a big breath before descending — hold it until you\'re back up.', zh:'下蹲前先收緊核心並深吸一口氣，直到站回頂部再吐氣。' },
+      { en:'Break at the hips and knees simultaneously; push your knees out in line with your toes.', zh:'髖部與膝蓋同時啟動，膝蓋向外推對齊腳尖方向，不要內夾。' },
+      { en:'Aim for at least parallel (thighs parallel to floor) — go deeper if mobility allows.', zh:'至少蹲到大腿與地面平行，若柔軟度允許可蹲更深。' },
+      { en:'Drive through the mid-foot and think "push the floor away" on the way up.', zh:'站起時重心落在腳掌中央，想像「把地板推開」。' },
+      { en:'Keep your chest up; if your torso collapses forward, the weight is too heavy.', zh:'保持胸部挺起；若上身前傾塌陷，代表重量過重或上背力量不足。' },
+    ]
+  },
+  {
+    id:'hacksquat', en:'Hack Squat', zh:'哈客深蹲', muscle:'legs', img:'Barbell_Hack_Squat',
+    tips:[
+      { en:'Foot placement higher on the platform reduces knee stress; lower increases quad range.', zh:'腳放高一點可減少膝蓋壓力；放低一點則增加股四頭的活動範圍。' },
+      { en:'Keep your lower back pressed firmly against the pad throughout the movement.', zh:'整個動作過程中，下背要緊貼靠墊，不要離開。' },
+      { en:'Push your knees out — don\'t let them cave inward.', zh:'膝蓋向外推，不要內扣。' },
+      { en:'Don\'t lock out your knees at the top; keep a slight bend to maintain tension.', zh:'頂部不要完全鎖死膝蓋，保持微彎以維持肌肉張力。' },
+      { en:'Control the descent — don\'t let the sled crash down.', zh:'控制下降速度，不要讓重量自由落下。' },
+      { en:'Pause briefly at the bottom for maximum quad stretch.', zh:'底部稍作停頓，讓股四頭獲得最大伸展。' },
+    ]
+  },
+  {
+    id:'splitsquat', en:'Split Squat', zh:'分腿蹲', muscle:'legs', img:'Barbell_Side_Split_Squat',
+    tips:[
+      { en:'Take a long enough stride so your front shin stays vertical when your rear knee nears the floor.', zh:'步伐要夠大，後膝接近地面時前小腿應保持垂直。' },
+      { en:'Lower your rear knee straight down — don\'t let it swing forward.', zh:'後膝直直往下沉，不要向前擺動。' },
+      { en:'Drive through the heel of your front foot to stand; the front leg does the work.', zh:'用前腳跟發力站起，前腳是主要用力的腿。' },
+      { en:'Keep your torso upright throughout — don\'t lean heavily forward.', zh:'全程保持上身直立，不要過度前傾。' },
+      { en:'Both hips should face forward; avoid rotating toward the front leg.', zh:'雙側髖部保持朝前，避免向前腳方向旋轉。' },
+      { en:'If your front knee drifts inward, slow down and reduce the weight.', zh:'若前膝往內偏移，請放慢速度並減輕重量。' },
+    ]
+  },
+  {
+    id:'stepup', en:'Step Up', zh:'單腳登階', muscle:'legs', img:'Barbell_Step_Ups',
+    tips:[
+      { en:'Step height should place your knee at roughly 90° when your foot is on the box.', zh:'台階高度應使腳踩上去時膝蓋呈約90度角。' },
+      { en:'Press through the heel of the working leg — not the toe.', zh:'用工作腿的腳跟發力往上踩，不是腳尖。' },
+      { en:'Do NOT push off the back foot; the trailing leg is just for balance.', zh:'不要用後腳借力；後腿僅用於維持平衡。' },
+      { en:'Fully extend the working leg at the top before stepping back down.', zh:'站到頂部時將工作腿完全伸直，再慢慢下來。' },
+      { en:'Control the descent slowly for extra time under tension.', zh:'緩慢控制下降，增加肌肉的張力時間。' },
+      { en:'Keep your hips level and torso tall — don\'t let your hip hike or drop.', zh:'保持髖部水平、上身直立，不要讓任一側髖部升高或下沉。' },
+    ]
+  },
+  {
+    id:'rdl', en:'Barbell RDL', zh:'槓鈴 RDL', muscle:'legs', img:'Romanian_Deadlift',
+    tips:[
+      { en:'This is a hip hinge, not a squat — maintain a slight, fixed knee bend throughout.', zh:'這是髖鉸鏈動作，不是深蹲——全程保持膝蓋微彎且固定不變。' },
+      { en:'Push your hips back as the bar travels down; keep the bar close to your thighs and shins.', zh:'槓下移時將髖部往後推；槓始終貼近大腿和小腿。' },
+      { en:'Stop when you feel a strong hamstring stretch (usually mid-shin) — going lower with a rounded back defeats the purpose.', zh:'感受到大腿後側強烈伸展時停止（通常約小腿中段）——弓背繼續下放會失去意義。' },
+      { en:'Keep your spine neutral from head to tailbone — no rounding the lower back.', zh:'從頭到尾骨保持脊椎中立，下背不要拱起。' },
+      { en:'Squeeze your glutes hard at the top to fully extend your hips.', zh:'頂部用力夾緊臀部，確保髖部完全伸展。' },
+      { en:'Shoulders should stay directly over or slightly in front of the bar at the bottom.', zh:'底部時肩膀應保持在槓的正上方或略微偏前。' },
+    ]
+  },
+  {
+    id:'bstance', en:'B-Stance Weighted Deadlift', zh:'B Stance 對側負重硬舉', muscle:'legs', img:'Stiff_Leg_Barbell_Good_Morning',
+    tips:[
+      { en:'The back foot is a kickstand only — place just your toes for balance, not for loading.', zh:'後腳只是平衡支撐，僅腳尖輕碰地面，不承受重量。' },
+      { en:'About 90% of the load should be on the front (working) leg.', zh:'約90%的負荷應由前腳（工作腿）承擔。' },
+      { en:'Hinge at the hip exactly like an RDL: spine neutral, weight close to body.', zh:'和RDL一樣進行髖鉸鏈：脊椎中立，重量貼近身體。' },
+      { en:'Feel the stretch primarily in the hamstring of the front leg.', zh:'主要感受前腿大腿後側的伸展。' },
+      { en:'Great for identifying and correcting left–right strength imbalances.', zh:'非常適合發現並改善左右腿的力量不均衡。' },
+      { en:'If balance is challenging, start with a dumbbell in the opposite hand.', zh:'若平衡困難，可先從對側手持啞鈴開始練習。' },
+    ]
+  },
   // UPPER
-  { id:'bench',       en:'Bench Press',             zh:'臥推',         muscle:'upper', img:'Barbell_Bench_Press_-_Medium_Grip' },
-  { id:'incline',     en:'Incline Bench Press',     zh:'上斜臥推',     muscle:'upper', img:'Barbell_Incline_Bench_Press_-_Medium_Grip' },
-  { id:'ohp',         en:'Overhead Press',          zh:'肩上推舉',     muscle:'upper', img:'Barbell_Shoulder_Press' },
-  { id:'pullup',      en:'Pull Up',                 zh:'引體向上',     muscle:'upper', img:'Band_Assisted_Pull-Up' },
-  { id:'pulldown',    en:'Lat Pulldown',            zh:'滑輪下拉',     muscle:'upper', img:'Pulldown' },
-  { id:'bbrow',       en:'Barbell Row',             zh:'槓鈴划船',     muscle:'upper', img:'Bent_Over_Barbell_Row' },
-  { id:'dbrow',       en:'Dumbbell Row',            zh:'啞鈴划船',     muscle:'upper', img:'One_Arm_Dumbbell_Row' },
-  { id:'curl',        en:'Bicep Curl',              zh:'二頭彎舉',     muscle:'upper', img:'Barbell_Curl' },
-  { id:'tricep',      en:'Tricep Pushdown',         zh:'三頭下壓',     muscle:'upper', img:'Triceps_Pushdown' },
-  { id:'lateral',     en:'Lateral Raise',           zh:'側平舉',       muscle:'upper', img:'Dumbbell_Lateral_Raise' },
-  { id:'cablefly',    en:'Cable Fly',               zh:'繩索夾胸',     muscle:'upper', img:'Cable_Fly' },
-  { id:'facepull',    en:'Face Pull',               zh:'臉拉',         muscle:'upper', img:'Face_Pull' },
-  { id:'straightarm', en:'Straight Arm Pulldown',   zh:'直臂下壓',     muscle:'upper', img:'Straight-Arm_Pulldown' },
+  {
+    id:'chestpress', en:'Dumbbell / Machine Chest Press', zh:'啞鈴・機械胸推', muscle:'upper', img:'Dumbbell_Bench_Press',
+    tips:[
+      { en:'Retract and depress your shoulder blades into the bench — this creates a stable, safe base.', zh:'將肩胛骨往後收攏並下壓貼緊椅背，建立穩定安全的支撐基礎。' },
+      { en:'Lower the weight to mid-chest with elbows at 45–75° from your torso (not flared straight out).', zh:'將重量降至胸部中段，手肘與身體呈45–75度角（不要完全外展）。' },
+      { en:'Don\'t let elbows flare to 90° — this puts unnecessary strain on the shoulder joint.', zh:'不要讓手肘外展至90度，這會對肩關節造成不必要的壓力。' },
+      { en:'Press up and very slightly inward, squeezing the chest at the top.', zh:'往上並微微向內推，在頂部夾緊胸肌。' },
+      { en:'Control the descent — aim for 2 seconds down.', zh:'控制下降速度，目標約2秒。' },
+      { en:'Keep feet flat on the floor and drive them into the ground for full-body stability.', zh:'雙腳平踩地面並向下踩穩，建立全身穩定性。' },
+    ]
+  },
+  {
+    id:'incline', en:'Barbell / Dumbbell Incline Press', zh:'槓鈴・啞鈴上胸推', muscle:'upper', img:'Barbell_Incline_Bench_Press_-_Medium_Grip',
+    tips:[
+      { en:'Set bench angle between 30–45°; steeper shifts work to front deltoids instead of upper chest.', zh:'椅背角度設在30–45度之間；角度太陡會讓前三角肌取代上胸發力。' },
+      { en:'Lower the bar or dumbbells to your upper chest — not your lower chest.', zh:'將槓或啞鈴降至上胸位置，而非下胸。' },
+      { en:'Keep your shoulder blades retracted and chest tall throughout.', zh:'全程保持肩胛骨收攏、胸部挺起。' },
+      { en:'Elbows travel at about 45–60° from your torso — not flared straight out.', zh:'手肘應與身體呈45–60度角，不要完全外展。' },
+      { en:'Think about pushing the ceiling away, not just the bar.', zh:'想像把天花板推開，而不只是推槓。' },
+      { en:'A slight lower-back arch is natural; excessive arch reduces chest range of motion.', zh:'下背輕微拱起是自然的；但過度拱背反而會縮小胸肌的活動範圍。' },
+    ]
+  },
+  {
+    id:'cablerow', en:'Cable Row', zh:'Cable 划船', muscle:'upper', img:'Seated_Cable_Rows',
+    tips:[
+      { en:'Sit tall with a proud chest — don\'t round your lower back.', zh:'坐直挺胸，不要駝背或圓腰。' },
+      { en:'Initiate the pull by depressing your shoulder blades first, then bend the elbows.', zh:'先將肩胛骨往下壓並收攏，再彎曲手肘完成拉動。' },
+      { en:'Squeeze your shoulder blades together hard at peak contraction — hold for 1 second.', zh:'在最大收縮時用力夾緊肩胛骨，保持1秒。' },
+      { en:'Avoid excessive forward lean on the return; a slight lean is okay.', zh:'回程時避免過度前傾；輕微前傾是可以接受的。' },
+      { en:'Control the stretch forward slowly — feel your lats and rhomboids lengthen.', zh:'緩慢控制向前伸展，感受背闊肌與菱形肌的延伸。' },
+      { en:'Elbows should stay close to your sides, not flaring outward.', zh:'手肘應貼近身體兩側，不要向外張開。' },
+    ]
+  },
+  {
+    id:'shoulderpress', en:'Dumbbell / Machine Shoulder Press', zh:'啞鈴・機械肩推', muscle:'upper', img:'Dumbbell_Shoulder_Press',
+    tips:[
+      { en:'Position elbows slightly in front of your body (not directly to the side) to protect the shoulder.', zh:'手肘稍微位於身體前方（不要完全側展），以保護肩關節。' },
+      { en:'Brace your core and avoid arching your lower back as you press overhead.', zh:'收緊核心，推舉時避免下背過度拱起。' },
+      { en:'Press directly overhead until arms are nearly fully extended.', zh:'直接往頭頂推舉，直到手臂近乎完全伸直。' },
+      { en:'Lower dumbbells to ear level only — no lower — to keep tension on the deltoids.', zh:'啞鈴降至耳朵高度即可，不要再低，以維持三角肌張力。' },
+      { en:'Keep wrists stacked over elbows at all times.', zh:'全程保持手腕在手肘正上方。' },
+      { en:'Don\'t use leg drive unless intentionally performing a push press.', zh:'除非刻意做推舉（push press），否則不要用腿部借力。' },
+    ]
+  },
+  {
+    id:'straightarm', en:'Straight Arm Pulldown', zh:'直臂下壓', muscle:'upper', img:'Straight-Arm_Pulldown',
+    tips:[
+      { en:'Keep arms straight with just a very slight soft elbow — no bending throughout the rep.', zh:'手臂全程保持伸直，只允許非常輕微的軟肘，不可彎曲。' },
+      { en:'Lean forward slightly from the hips (about 15–20°) for better range of motion.', zh:'從髖部輕微前傾（約15–20度），以獲得更大的活動範圍。' },
+      { en:'Think "drive elbows down and back toward your hips" — not just pushing the bar down.', zh:'想著「把手肘往下、往後推向髖部」，而不只是把槓往下壓。' },
+      { en:'You should feel this in your lats, not triceps. If triceps fire, check your elbows aren\'t bending.', zh:'應感受到背闊肌深處發力，而非三頭肌。若感覺三頭肌用力，請確認手肘是否彎曲。' },
+      { en:'Control the return to full overhead extension for maximum lat stretch.', zh:'回程控制至手臂完全上舉，讓背闊肌獲得最大伸展。' },
+      { en:'Isolation exercise — use a weight that lets you feel the muscle, not ego-lift.', zh:'這是孤立動作，使用能感受到肌肉的重量，不要逞強加重。' },
+    ]
+  },
+  {
+    id:'pulldown', en:'Cable Lat Pulldown', zh:'滑輪下拉', muscle:'upper', img:'Wide-Grip_Lat_Pulldown',
+    tips:[
+      { en:'Lean back slightly (about 10–15°) — not excessively.', zh:'略微後傾（約10–15度），不要過度後仰。' },
+      { en:'Before pulling, depress your shoulder blades — pull shoulders down away from your ears first.', zh:'拉之前先將肩胛骨下壓，把肩膀往下遠離耳朵。' },
+      { en:'Pull the bar to your upper chest — never behind your neck.', zh:'將槓拉至上胸位置，絕對不要拉到頸後。' },
+      { en:'Think "elbows to back pockets" to fully engage the lats.', zh:'想著「把手肘往後褲袋方向拉」，以充分啟動背闊肌。' },
+      { en:'Control the return slowly — the stretch at the top builds lat length over time.', zh:'緩慢控制回程，頂部的伸展能長期增加背闊肌的長度。' },
+      { en:'Avoid momentum or excessive body swing to move the weight.', zh:'避免利用慣性或過度晃動身體來移動重量。' },
+    ]
+  },
 ];
 
 // ── STORAGE ───────────────────────────────────────────────
@@ -227,22 +369,19 @@ function showScreen(name) {
 }
 
 // ── EXERCISE IMAGE HELPER ─────────────────────────────────
-function exWrap(e, classes = '') {
+function exWrap(e) {
   return `
-    <div class="ex-wrap ${classes}" id="wrap-${e.id}">
-      <img class="ex-frame-0" src="${IMG}${e.img}/0.jpg"
+    <div class="ex-wrap" id="wrap-${e.id}">
+      <img src="${IMG}${e.img}/0.jpg" alt="${e.en}"
            onerror="document.getElementById('wrap-${e.id}').classList.add('failed')">
-      <img class="ex-frame-1" src="${IMG}${e.img}/1.jpg" onerror="">
-      <div class="ex-label">${e.zh}</div>
+      <div class="ex-label">${e.zh}<br><span style="color:#475569;font-size:10px">${e.en}</span></div>
     </div>`;
 }
 
 function thumbWrap(e) {
   return `
-    <div class="ex-thumb-wrap" id="thumb-${e.id}">
-      <img class="ex-frame-0" src="${IMG}${e.img}/0.jpg"
-           onerror="document.getElementById('thumb-${e.id}').style.background='#1e293b'">
-      <img class="ex-frame-1" src="${IMG}${e.img}/1.jpg" onerror="">
+    <div class="ex-thumb-wrap">
+      <img src="${IMG}${e.img}/0.jpg" alt="${e.en}" onerror="this.style.display='none'">
     </div>`;
 }
 
@@ -300,13 +439,12 @@ function renderPicker() {
 function exerciseCard(e) {
   const sel = selectedExercises.some(s => s.id === e.id);
   return `
-    <div class="exercise-card ${sel ? 'selected' : ''} bg-gray-900 rounded-2xl overflow-hidden cursor-pointer"
-         onclick="toggleExercise('${e.id}')">
-      <div class="relative">
+    <div class="exercise-card ${sel ? 'selected' : ''} bg-gray-900 rounded-2xl overflow-hidden cursor-pointer">
+      <div class="relative" onclick="openActionSheet('${e.id}')">
         ${exWrap(e)}
         ${sel ? '<div class="absolute top-2 right-2 bg-indigo-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow z-10">✓</div>' : ''}
       </div>
-      <div class="p-2">
+      <div class="p-2" onclick="openActionSheet('${e.id}')">
         <div class="font-semibold text-sm leading-tight">${e.zh}</div>
         <div class="text-xs text-gray-400 mt-0.5">${e.en}</div>
       </div>
@@ -319,6 +457,72 @@ function toggleExercise(id) {
   if (idx > -1) selectedExercises.splice(idx, 1);
   else selectedExercises.push(ex);
   renderPicker();
+}
+
+// ── ACTION SHEET ──────────────────────────────────────────
+let _modalId = null;
+
+function openActionSheet(id) {
+  const e = EXERCISES.find(ex => ex.id === id);
+  _modalId = id;
+  document.getElementById('modal-img').src = `${IMG}${e.img}/0.jpg`;
+  document.getElementById('modal-zh').textContent = e.zh;
+  document.getElementById('modal-en').textContent = e.en;
+  const sel = selectedExercises.some(s => s.id === id);
+  document.getElementById('modal-log-label').innerHTML = sel
+    ? 'Remove from Workout <span class="text-green-500 font-normal text-sm">移除</span>'
+    : 'Add to Workout <span class="text-green-500 font-normal text-sm">加入訓練</span>';
+  document.getElementById('modal-action').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-action').classList.add('hidden');
+  _modalId = null;
+}
+
+function goToTips() {
+  const id = _modalId;
+  closeModal();
+  showTipsScreen(id);
+}
+
+function modalToggleExercise() {
+  const id = _modalId;
+  closeModal();
+  toggleExercise(id);
+}
+
+// ── TIPS SCREEN ───────────────────────────────────────────
+function showTipsScreen(id) {
+  const e = EXERCISES.find(ex => ex.id === id);
+  document.getElementById('tips-content').innerHTML = `
+    <div class="flex items-center gap-4 mb-6">
+      <div class="ex-thumb-wrap w-20 h-20 rounded-2xl flex-shrink-0" style="width:80px;height:80px;border-radius:16px">
+        <img src="${IMG}${e.img}/0.jpg" alt="${e.en}" onerror="this.style.display='none'"
+             style="width:100%;height:100%;object-fit:cover;display:block;border-radius:16px">
+      </div>
+      <div>
+        <h2 class="text-xl font-bold leading-tight">${e.zh}</h2>
+        <p class="text-gray-400 text-sm mt-0.5">${e.en}</p>
+      </div>
+    </div>
+    <div class="space-y-3 mb-6">
+      ${e.tips.map((tip, i) => `
+        <div class="bg-gray-900 rounded-2xl p-4 flex gap-3">
+          <span class="text-indigo-400 font-bold text-sm flex-shrink-0 mt-0.5">${i + 1}</span>
+          <div>
+            <p class="text-gray-200 text-sm leading-relaxed">${tip.en}</p>
+            <p class="text-gray-500 text-xs leading-relaxed mt-1">${tip.zh}</p>
+          </div>
+        </div>`).join('')}
+    </div>
+    <button onclick="showScreen('log')"
+      class="w-full bg-indigo-600 active:bg-indigo-700 text-white font-bold py-4 rounded-2xl text-base">
+      ← Back to Exercises
+    </button>`;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-tips').classList.add('active');
 }
 
 function updatePickSummary() {
