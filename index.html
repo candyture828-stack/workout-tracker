@@ -28,86 +28,51 @@
       --sh-md: 0 4px 16px rgba(0,0,0,0.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-    body{
-      font-family:'DM Sans','Noto Sans TC',sans-serif;
-      background:var(--bg);color:var(--text-1);
-      max-width:430px;margin:0 auto;min-height:100vh;
-    }
+    body{font-family:'DM Sans','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text-1);max-width:430px;margin:0 auto;min-height:100vh}
     @media(min-width:768px){body{max-width:680px}}
 
-    /* ── SCREENS ── */
     .screen{display:none;min-height:100vh;padding-bottom:calc(var(--nav-h)+20px);overflow-y:auto}
     .screen.active{display:block}
 
     /* ── NAV ── */
-    .bottom-nav{
-      position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-      width:100%;max-width:430px;background:var(--surface);
-      border-top:var(--bw) solid var(--border);display:flex;z-index:100;
-      height:var(--nav-h);
-    }
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--surface);border-top:var(--bw) solid var(--border);display:flex;z-index:100;height:var(--nav-h)}
     @media(min-width:768px){.bottom-nav{max-width:680px}}
-    .nav-btn{
-      flex:1;display:flex;flex-direction:column;align-items:center;
-      justify-content:center;gap:4px;background:none;border:none;
-      cursor:pointer;color:var(--text-3);font-size:10px;font-family:inherit;
-      font-weight:500;transition:color .15s;padding:8px 0;
-    }
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--text-3);font-size:10px;font-family:inherit;font-weight:500;transition:color .15s;padding:8px 0}
     .nav-btn.active{color:var(--primary)}
     .nav-btn svg{width:22px;height:22px;stroke-width:1.75;fill:none;stroke:currentColor}
 
-    /* ── CARDS / BUTTONS ── */
-    .card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);box-shadow:var(--sh)}
-    .btn-primary{
-      background:var(--primary);color:#fff;border:none;border-radius:var(--r);
-      font-family:inherit;font-weight:600;font-size:16px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      transition:background .15s,transform .1s;
-    }
+    /* ── BUTTONS ── */
+    .btn-primary{background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-family:inherit;font-weight:600;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s}
     .btn-primary:active{background:var(--primary-dark);transform:scale(.98)}
     .btn-primary:disabled{background:#c8d5c0;cursor:not-allowed;transform:none}
-    .back-btn{
-      background:var(--surface);border:var(--bw) solid var(--border);border-radius:10px;
-      width:36px;height:36px;display:flex;align-items:center;justify-content:center;
-      cursor:pointer;flex-shrink:0;color:var(--text-1);
-    }
-    .back-btn svg{width:18px;height:18px;stroke-width:2;fill:none;stroke:currentColor}
 
     /* ── INPUTS ── */
-    input[type=number],input[type=date]{
-      -moz-appearance:textfield;font-family:inherit;
-      background:var(--surface-2);border:var(--bw) solid var(--border);
-      border-radius:8px;color:var(--text-1);font-size:15px;
-      outline:none;transition:border-color .15s;
-    }
+    input[type=number],input[type=date]{-moz-appearance:textfield;font-family:inherit;background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:8px;color:var(--text-1);font-size:15px;outline:none;transition:border-color .15s}
     input[type=number]:focus,input[type=date]:focus{border-color:var(--primary)}
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 
     /* ── HOME ── */
-    .home-header{padding:52px 20px 16px}
+    .home-header{padding:52px 20px 12px}
     .greeting{font-size:15px;color:var(--text-2);margin-bottom:4px}
-    .greeting-name{font-size:28px;font-weight:700}
-    .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 16px}
-    .stat-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh)}
-    .stat-label{font-size:11px;color:var(--text-3);font-weight:500;margin-bottom:6px}
-    .stat-val{font-size:22px;font-weight:700}
-    .stat-unit{font-size:13px;font-weight:400;color:var(--text-2);margin-left:2px}
-    .cta-wrap{padding:0 20px 20px}
+    .greeting-name{font-size:28px;font-weight:700;margin-bottom:8px}
+    .streak-badge{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--primary);background:var(--primary-light);padding:5px 11px;border-radius:100px}
+
+    .home-charts{padding:0 20px 16px;display:flex;flex-direction:column;gap:10px}
+    .home-chart-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh)}
+    .home-chart-label{font-size:11px;color:var(--text-3);font-weight:500;margin-bottom:10px}
+
+    .cta-wrap{padding:0 20px 16px}
     .cta-btn{width:100%;height:56px;border-radius:var(--r-lg);font-size:17px}
 
-    /* chips */
-    .chips-section{padding:0 0 20px}
-    .chips-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:0 20px;margin-bottom:10px}
-    .chips-scroll{display:flex;gap:12px;padding:4px 20px;overflow-x:auto;scrollbar-width:none}
-    .chips-scroll::-webkit-scrollbar{display:none}
-    .chip{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;width:68px}
-    .chip-img{width:60px;height:60px;border-radius:50%;border:var(--bw) solid var(--border);overflow:hidden;background:var(--surface-2)}
-    .chip-img img{width:100%;height:100%;object-fit:cover;display:block}
-    .chip-en{font-size:9.5px;font-weight:500;color:var(--text-1);text-align:center;line-height:1.3}
-    .chip-zh{font-size:9px;color:var(--text-3);text-align:center}
+    /* Body stats quick log on home */
+    .bcomp-section{padding:0 20px 20px}
+    .bcomp-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh)}
+    .bcomp-card-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+    .bcomp-date{width:100%;padding:10px 12px;margin-bottom:10px}
+    .bcomp-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+    .bcomp-field input{width:100%;padding:10px 6px;text-align:center}
+    .bcomp-field-label{font-size:10px;color:var(--text-3);text-align:center;margin-top:4px}
 
-    /* recent sessions */
     .section-block{padding:0 20px}
     .section-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
     .session-item{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh)}
@@ -120,115 +85,69 @@
     .screen-header{display:flex;align-items:center;gap:12px;padding:52px 20px 16px}
     .screen-title{font-size:20px;font-weight:700}
     .screen-sub{font-size:13px;color:var(--text-3);margin-top:2px}
-
-    /* ── LOG – PICKER ── */
-    .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin-bottom:4px}
     .muscle-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);padding:0 20px;margin:12px 0 8px}
-    .ex-card{
-      background:var(--surface);border:var(--bw) solid var(--border);
-      border-radius:var(--r);overflow:hidden;cursor:pointer;box-shadow:var(--sh);
-      transition:border-color .15s,box-shadow .15s;position:relative;
-    }
-    .ex-card.selected{border-color:var(--primary);box-shadow:0 0 0 2px rgba(59,109,17,.15)}
-    .ex-card-img{aspect-ratio:4/3;background:var(--surface-2);overflow:hidden;position:relative}
-    .ex-card-img img{width:100%;height:100%;object-fit:cover;display:block}
-    .ex-fallback{
-      display:none;position:absolute;inset:0;align-items:center;justify-content:center;
-      font-size:10px;color:var(--text-3);text-align:center;padding:6px;line-height:1.4;
-    }
-    .img-failed img{display:none}
-    .img-failed .ex-fallback{display:flex}
-    .ex-card-body{padding:10px}
-    .ex-card-zh{font-size:13px;font-weight:600;line-height:1.3}
-    .ex-card-en{font-size:11px;color:var(--text-3);margin-top:2px}
-    .ex-check{
-      position:absolute;top:7px;right:7px;width:22px;height:22px;
-      background:var(--primary);border-radius:50%;display:flex;
-      align-items:center;justify-content:center;box-shadow:var(--sh);
-    }
-    .ex-check svg{width:12px;height:12px;stroke:#fff;stroke-width:3;fill:none}
-    .pick-footer{
-      padding:20px;position:sticky;bottom:var(--nav-h);
-      background:linear-gradient(to bottom,transparent,var(--bg) 35%);
-    }
-    .pick-summary{font-size:13px;color:var(--text-3);text-align:center;margin-bottom:10px}
-    .pick-summary.ready{color:var(--primary)}
 
-    /* ── LOG – SET CARDS ── */
-    .set-cards{padding:0 20px}
-    .set-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
-    .set-card-head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:var(--bw) solid var(--border)}
-    .set-thumb{width:48px;height:48px;border-radius:8px;overflow:hidden;background:var(--surface-2);flex-shrink:0}
-    .set-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .set-zh{font-weight:600;font-size:14px}
-    .set-en{font-size:12px;color:var(--text-3);margin-top:2px}
-    .set-table{padding:12px 14px}
+    /* ── SET INPUTS ── */
     .set-table-head{display:grid;grid-template-columns:48px 1fr 1fr;gap:8px;margin-bottom:8px;font-size:11px;color:var(--text-3);text-align:center}
     .set-row{display:grid;grid-template-columns:48px 1fr 1fr;gap:8px;margin-bottom:8px}
-    .set-num{
-      background:var(--primary-light);color:var(--primary);border-radius:8px;
-      font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;
-    }
+    .set-num{background:var(--primary-light);color:var(--primary);border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
     .set-input{width:100%;padding:10px 6px;text-align:center}
 
-    /* ── DETAIL (Tips + Log tabs) ── */
-    .detail-header{display:flex;align-items:center;gap:12px;padding:52px 20px 16px}
-    .detail-name-zh{font-size:18px;font-weight:700}
-    .detail-name-en{font-size:13px;color:var(--text-3);margin-top:2px}
-    .tab-bar{
-      display:flex;gap:4px;margin:0 20px 20px;
-      background:var(--surface-2);border-radius:10px;padding:4px;
-    }
-    .tab-btn{
-      flex:1;padding:8px;background:none;border:none;border-radius:7px;
-      font-family:inherit;font-size:14px;font-weight:500;color:var(--text-3);
-      cursor:pointer;transition:all .15s;
-    }
-    .tab-btn.active{background:var(--surface);color:var(--text-1);box-shadow:var(--sh)}
-    .detail-hero{
-      margin:0 20px 20px;aspect-ratio:16/9;background:var(--surface-2);
-      border-radius:var(--r);border:var(--bw) solid var(--border);overflow:hidden;
-    }
-    .detail-hero img{width:100%;height:100%;object-fit:cover;display:block}
-    .tips-list{padding:0 20px}
-    .tip-item{
-      display:flex;gap:12px;padding:14px;background:var(--surface);
-      border:var(--bw) solid var(--border);border-radius:var(--r);
-      margin-bottom:8px;box-shadow:var(--sh);
-    }
-    .tip-num{
-      width:24px;height:24px;background:var(--primary-light);color:var(--primary);
-      border-radius:50%;display:flex;align-items:center;justify-content:center;
-      font-size:12px;font-weight:700;flex-shrink:0;
-    }
-    .tip-en{font-size:13px;line-height:1.6;color:var(--text-1);margin-bottom:5px}
-    .tip-zh{font-size:12px;line-height:1.6;color:var(--text-2)}
-    .detail-log-wrap{padding:0 20px}
+    /* ── LOG CARDS ── */
+    .log-ex-list{padding:0 20px}
+    .log-ex-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);margin-bottom:10px;box-shadow:var(--sh);overflow:hidden;transition:border-color .15s,box-shadow .15s}
+    .log-ex-card.saved{border-color:var(--primary);box-shadow:0 0 0 2px rgba(59,109,17,.12)}
+    .log-ex-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;width:100%;background:none;border:none;font-family:inherit;text-align:left}
+    .log-ex-info{flex:1;min-width:0}
+    .log-ex-zh{font-weight:600;font-size:15px}
+    .log-ex-en{font-size:11px;color:var(--text-3);margin-top:2px}
+    .log-ex-saved-summary{font-size:11px;color:var(--primary);font-weight:500;margin-top:4px}
+    .log-ex-badge{width:28px;height:28px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s}
+    .log-ex-card.saved .log-ex-badge{opacity:1}
+    .log-ex-badge svg{width:14px;height:14px;stroke:#fff;stroke-width:3;fill:none}
+    .log-ex-body{display:none;border-top:var(--bw) solid var(--border);padding:14px 16px}
+    .log-ex-card.open .log-ex-body{display:block}
+    .last-hint{font-size:11px;color:var(--text-3);margin-bottom:12px;padding:7px 10px;background:var(--surface-2);border-radius:7px;line-height:1.6}
+    .last-hint strong{color:var(--text-2);font-weight:500}
+    .log-footer{padding:16px 20px 20px;position:sticky;bottom:var(--nav-h);background:linear-gradient(to bottom,transparent,var(--bg) 40%)}
+    .log-footer-count{font-size:13px;color:var(--text-3);text-align:center;margin-bottom:10px}
+    .log-footer-count.ready{color:var(--primary);font-weight:500}
 
-    /* ── WEIGHT ── */
-    .weight-form{display:flex;gap:8px;padding:0 20px;margin-bottom:16px}
-    .weight-form input[type=date]{flex:1;padding:10px 12px}
-    .weight-form input[type=number]{width:80px;padding:10px 6px;text-align:center}
-    .chart-card{margin:0 20px 16px;padding:16px;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);box-shadow:var(--sh)}
-    .weight-list{padding:0 20px}
-    .weight-entry{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:12px 16px;background:var(--surface);border:var(--bw) solid var(--border);
-      border-radius:var(--r);margin-bottom:6px;box-shadow:var(--sh);
-    }
-    .weight-date{font-size:13px;color:var(--text-2)}
-    .weight-val{font-size:16px;font-weight:600}
-    .weight-unit{font-size:12px;color:var(--text-3);font-weight:400;margin-left:2px}
-    .del-btn{background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;font-size:14px;transition:color .15s}
+    /* ── STATS SCREEN ── */
+    .stats-form{padding:0 20px 16px}
+    .stats-form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+    .stats-field input{width:100%;padding:10px 6px;text-align:center}
+    .stats-field-label{font-size:10px;color:var(--text-3);text-align:center;margin-top:4px}
+    .stats-chart-section{padding:0 20px 10px}
+    .stats-chart-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);margin-bottom:10px}
+    .stats-chart-label{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:10px}
+    .stats-list{padding:0 20px}
+    .stats-entry{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);margin-bottom:6px;box-shadow:var(--sh)}
+    .stats-entry-date{font-size:12px;color:var(--text-2);width:86px;flex-shrink:0}
+    .stats-entry-vals{flex:1;display:flex;flex-wrap:wrap;gap:8px}
+    .stats-pill{font-size:13px;font-weight:600;background:var(--surface-2);border-radius:6px;padding:3px 8px;white-space:nowrap}
+    .stats-pill small{font-size:10px;font-weight:400;color:var(--text-3);margin-left:2px}
+    .del-btn{background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;transition:color .15s;flex-shrink:0}
     .del-btn:hover{color:#c53030}
 
-    /* ── HISTORY ── */
+    /* ── HISTORY CALENDAR ── */
+    .cal-wrap{padding:0 20px 16px}
+    .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .cal-nav-btn{background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2)}
+    .cal-nav-btn svg{width:16px;height:16px;stroke-width:2;fill:none;stroke:currentColor}
+    .cal-month{font-size:15px;font-weight:600}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+    .cal-day-hdr{font-size:10px;color:var(--text-3);text-align:center;padding:4px 0;font-weight:500}
+    .cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:50%;color:var(--text-2)}
+    .cal-day.worked{background:var(--primary);color:#fff;font-weight:700}
+    .cal-day.today{outline:1.5px solid var(--primary);color:var(--primary);font-weight:600}
+    .cal-day.worked.today{outline:none}
+    .cal-day.dim{color:var(--text-3);opacity:.35}
+
+    /* ── HISTORY LIST ── */
     .history-list{padding:0 20px}
     .history-item{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);margin-bottom:8px;box-shadow:var(--sh);overflow:hidden}
-    .history-head{
-      width:100%;display:flex;justify-content:space-between;align-items:center;
-      padding:14px 16px;background:none;border:none;font-family:inherit;cursor:pointer;text-align:left;
-    }
+    .history-head{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:none;border:none;font-family:inherit;cursor:pointer;text-align:left}
     .history-date{font-weight:600;font-size:14px}
     .history-exes{font-size:12px;color:var(--text-2);margin-top:3px}
     .history-arrow{color:var(--text-3);transition:transform .2s}
@@ -239,48 +158,12 @@
     .hist-set-row{display:flex;gap:16px;font-size:13px;color:var(--text-2);margin-bottom:4px}
     .hist-set-num{color:var(--primary);font-weight:600;width:44px}
     .hist-ex-block{margin-bottom:12px}
-
-    /* ── ACTION SHEET ── */
-    .action-overlay{
-      display:none;position:fixed;inset:0;z-index:200;
-      align-items:flex-end;
-      max-width:430px;left:50%;transform:translateX(-50%);
-    }
-    .action-overlay.open{display:flex}
-    .action-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(2px)}
-    .action-sheet{
-      position:relative;width:100%;background:var(--surface);
-      border-radius:20px 20px 0 0;padding:16px 20px 28px;z-index:1;
-    }
-    .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
-    .sheet-ex{display:flex;align-items:center;gap:14px;margin-bottom:20px}
-    .sheet-thumb{width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--surface-2);flex-shrink:0;border:var(--bw) solid var(--border)}
-    .sheet-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .sheet-zh{font-size:18px;font-weight:700}
-    .sheet-en{font-size:13px;color:var(--text-3);margin-top:2px}
-    .action-btn{
-      width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;
-      background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:var(--r);
-      margin-bottom:10px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;
-      color:var(--text-1);transition:background .15s;text-align:left;
-    }
-    .action-btn:active{background:var(--primary-light)}
-    .action-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .tips-icon{background:#FEF9C3}
-    .log-icon{background:var(--primary-light)}
-    .action-icon svg{width:18px;height:18px;stroke-width:2;fill:none}
-    .tips-icon svg{stroke:#B45309}
-    .log-icon svg{stroke:var(--primary)}
-    .action-sub{font-size:12px;color:var(--text-3);font-weight:400;margin-top:1px}
-    .action-cancel{width:100%;background:none;border:none;color:var(--text-2);font-family:inherit;font-size:14px;padding:10px;cursor:pointer}
+    .hist-del-btn{width:100%;background:none;border:none;font-family:inherit;font-size:12px;color:var(--text-3);cursor:pointer;padding:10px 0 2px;text-align:center;transition:color .15s}
+    .hist-del-btn:hover{color:#c53030}
 
     /* ── TOAST ── */
-    .toast{
-      position:fixed;top:20px;left:50%;transform:translateX(-50%);
-      background:var(--text-1);color:#fff;padding:10px 20px;border-radius:100px;
-      font-size:13px;font-weight:500;z-index:500;pointer-events:none;
-      white-space:nowrap;box-shadow:var(--sh-md);
-    }
+    .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-1);color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;z-index:500;pointer-events:none;white-space:nowrap;box-shadow:var(--sh-md)}
+    .toast.pr{background:var(--primary)}
 
     .empty-state{text-align:center;color:var(--text-3);font-size:14px;padding:40px 20px}
   </style>
@@ -291,32 +174,21 @@
 <div id="screen-home" class="screen active">
   <div class="home-header">
     <div class="greeting" id="greeting-text">Good morning,</div>
-    <div class="greeting-name">Candy</div>
+    <div class="greeting-name">Candice</div>
+    <div id="streak-badge" class="streak-badge" style="display:none"></div>
   </div>
 
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-label">This week</div>
-      <div class="stat-val" id="stat-sessions">0 <span class="stat-unit">sessions</span></div>
+  <div class="home-charts">
+    <div class="home-chart-card">
+      <div class="home-chart-label">近期運動量 · Activity (14 days)</div>
+      <canvas id="home-activity-chart" height="64"></canvas>
+      <div id="home-activity-empty" style="display:none;font-size:12px;color:var(--text-3);padding:8px 0 4px;text-align:center">開始記錄後就會出現 · Start logging to see activity</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Body weight</div>
-      <div class="stat-val" id="stat-weight">-- <span class="stat-unit">kg</span></div>
+    <div class="home-chart-card">
+      <div class="home-chart-label">體重趨勢 · Weight Trend</div>
+      <canvas id="home-weight-chart" height="64"></canvas>
+      <div id="home-weight-empty" style="display:none;font-size:12px;color:var(--text-3);padding:8px 0 4px;text-align:center">記錄體重後顯示 · Log weight to see trend</div>
     </div>
-  </div>
-
-  <div class="cta-wrap">
-    <button class="btn-primary cta-btn" onclick="startWorkout()">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-      </svg>
-      Start today's workout
-    </button>
-  </div>
-
-  <div class="chips-section">
-    <div class="chips-label">Exercises 動作庫</div>
-    <div class="chips-scroll" id="exercise-chips"></div>
   </div>
 
   <div class="section-block">
@@ -327,158 +199,114 @@
 
 <!-- ── LOG ── -->
 <div id="screen-log" class="screen">
-  <!-- Step 1: Pick -->
-  <div id="log-step-pick">
-    <div class="screen-header">
-      <button class="back-btn" onclick="showScreen('home')">
-        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <div>
-        <div class="screen-title">Select Exercises</div>
-        <div class="screen-sub">Tap to add · tap again to remove</div>
-      </div>
-    </div>
-
-    <div class="muscle-label">Legs 腿部</div>
-    <div id="leg-exercises" class="ex-grid"></div>
-
-    <div class="muscle-label">Upper Body 上肢</div>
-    <div id="upper-exercises" class="ex-grid"></div>
-
-    <div class="pick-footer">
-      <div id="pick-summary" class="pick-summary">Select at least 1 exercise</div>
-      <button id="start-log-btn" class="btn-primary" style="width:100%;height:52px;border-radius:var(--r-lg)" onclick="startLogging()" disabled>
-        Start Logging
-      </button>
+  <div class="screen-header" style="padding-bottom:12px">
+    <div>
+      <div class="screen-title">Log Workout</div>
+      <div class="screen-sub">Tap an exercise to log your sets</div>
     </div>
   </div>
 
-  <!-- Step 2: Log Sets -->
-  <div id="log-step-sets" style="display:none">
-    <div class="screen-header">
-      <button class="back-btn" onclick="backToPick()">
-        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <div class="screen-title">Log Sets</div>
-    </div>
-    <div id="exercise-set-cards" class="set-cards"></div>
-    <div style="padding:0 20px 8px">
-      <button class="btn-primary" style="width:100%;height:52px;border-radius:var(--r-lg)" onclick="saveWorkout()">
-        Save Workout
-      </button>
-    </div>
+  <div style="padding:0 20px 4px">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px">Workout Date</div>
+    <input type="date" id="log-date" style="width:100%;padding:10px 12px">
+  </div>
+
+  <div class="muscle-label">Warm Up 熱身</div>
+  <div id="log-warmup-exercises" class="log-ex-list"></div>
+
+  <div class="muscle-label">Legs 腿部</div>
+  <div id="log-leg-exercises" class="log-ex-list"></div>
+
+  <div class="muscle-label">Upper Body 上肢</div>
+  <div id="log-upper-exercises" class="log-ex-list"></div>
+
+  <div style="height:130px"></div>
+
+  <div class="log-footer">
+    <div id="log-footer-count" class="log-footer-count">Tap an exercise above to start</div>
+    <button class="btn-primary" id="finish-workout-btn" style="width:100%;height:52px;border-radius:var(--r-lg)" onclick="finishWorkout()" disabled>
+      Finish Workout
+    </button>
   </div>
 </div>
 
-<!-- ── WEIGHT ── -->
-<div id="screen-weight" class="screen">
-  <div class="screen-header" style="padding-bottom:20px">
+<!-- ── STATS ── -->
+<div id="screen-stats" class="screen">
+  <div class="screen-header" style="padding-bottom:12px">
     <div>
-      <div class="screen-title">Body Weight</div>
-      <div class="screen-sub">Track your weight over time</div>
+      <div class="screen-title">Body Stats 身體數據</div>
+      <div class="screen-sub">Weight · Body fat · Muscle mass</div>
     </div>
   </div>
-  <div class="weight-form">
-    <input type="date" id="bw-date">
-    <input type="number" id="bw-weight" placeholder="kg" step="0.1">
-    <button class="btn-primary" style="width:44px;height:42px;border-radius:8px;flex-shrink:0;font-size:22px" onclick="addWeight()">+</button>
+
+  <div class="stats-form">
+    <input type="date" id="bw-date" style="width:100%;padding:10px 12px;margin-bottom:10px">
+    <div class="stats-form-row">
+      <div class="stats-field">
+        <input type="number" id="bw-weight" placeholder="--" step="0.1" min="0">
+        <div class="stats-field-label">kg 體重</div>
+      </div>
+      <div class="stats-field">
+        <input type="number" id="bw-fat" placeholder="--" step="0.1" min="0" max="100">
+        <div class="stats-field-label">% 體脂</div>
+      </div>
+      <div class="stats-field">
+        <input type="number" id="bw-muscle" placeholder="--" step="0.1" min="0">
+        <div class="stats-field-label">kg 肌肉</div>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%;height:44px;border-radius:10px;font-size:15px" onclick="addBodyStats()">Save</button>
   </div>
-  <div class="chart-card">
-    <div id="weight-chart-wrap"><canvas id="weight-chart"></canvas></div>
-    <div id="weight-chart-empty" class="empty-state" style="display:none;padding:20px">Log 2+ entries to see the trend</div>
+
+  <div class="stats-chart-section">
+    <div class="stats-chart-card">
+      <div class="stats-chart-label">體重 Weight (kg)</div>
+      <canvas id="weight-chart" height="80"></canvas>
+      <div id="weight-chart-empty" style="display:none;font-size:12px;color:var(--text-3);text-align:center;padding:12px 0">Log 2+ entries to see trend</div>
+    </div>
+    <div class="stats-chart-card">
+      <div class="stats-chart-label">體脂率 Body Fat (%)</div>
+      <canvas id="fat-chart" height="80"></canvas>
+      <div id="fat-chart-empty" style="display:none;font-size:12px;color:var(--text-3);text-align:center;padding:12px 0">Log 2+ entries to see trend</div>
+    </div>
+    <div class="stats-chart-card">
+      <div class="stats-chart-label">肌肉量 Muscle Mass (kg)</div>
+      <canvas id="muscle-chart" height="80"></canvas>
+      <div id="muscle-chart-empty" style="display:none;font-size:12px;color:var(--text-3);text-align:center;padding:12px 0">Log 2+ entries to see trend</div>
+    </div>
   </div>
-  <div class="weight-list" id="weight-list"></div>
+
+  <div class="stats-list" id="stats-list"></div>
 </div>
 
 <!-- ── HISTORY ── -->
 <div id="screen-history" class="screen">
-  <div class="screen-header" style="padding-bottom:20px">
+  <div class="screen-header" style="padding-bottom:16px">
     <div>
       <div class="screen-title">History</div>
       <div class="screen-sub">All your past sessions</div>
     </div>
   </div>
+
+  <div class="cal-wrap">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="prevMonth()">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <span class="cal-month" id="cal-month-label"></span>
+      <button class="cal-nav-btn" onclick="nextMonth()">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="cal-grid" id="cal-grid">
+      <div class="cal-day-hdr">S</div><div class="cal-day-hdr">M</div>
+      <div class="cal-day-hdr">T</div><div class="cal-day-hdr">W</div>
+      <div class="cal-day-hdr">T</div><div class="cal-day-hdr">F</div>
+      <div class="cal-day-hdr">S</div>
+    </div>
+  </div>
+
   <div class="history-list" id="history-list"></div>
-</div>
-
-<!-- ── DETAIL (Tips + Log) ── -->
-<div id="screen-detail" class="screen">
-  <div class="detail-header">
-    <button class="back-btn" onclick="backFromDetail()">
-      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-    </button>
-    <div>
-      <div class="detail-name-zh" id="detail-zh"></div>
-      <div class="detail-name-en" id="detail-en"></div>
-    </div>
-  </div>
-
-  <div class="tab-bar">
-    <button class="tab-btn active" id="tab-tips" onclick="switchTab('tips')">Tips 運動提示</button>
-    <button class="tab-btn" id="tab-log" onclick="switchTab('log')">Log 記錄</button>
-  </div>
-
-  <!-- Tips pane -->
-  <div id="pane-tips">
-    <div class="detail-hero">
-      <img id="detail-hero-img" src="" alt="" onerror="this.style.display='none'">
-    </div>
-    <div class="tips-list" id="detail-tips-list"></div>
-    <div style="padding:20px">
-      <button class="btn-primary" style="width:100%;height:52px;border-radius:var(--r-lg)" onclick="backFromDetail()">
-        Back to exercises
-      </button>
-    </div>
-  </div>
-
-  <!-- Log pane -->
-  <div id="pane-log" style="display:none">
-    <div class="detail-log-wrap">
-      <div class="set-table">
-        <div class="set-table-head"><span>Set</span><span>Reps</span><span>Weight (kg)</span></div>
-        <div id="detail-set-rows"></div>
-      </div>
-    </div>
-    <div style="padding:16px 20px">
-      <button class="btn-primary" style="width:100%;height:52px;border-radius:var(--r-lg)" onclick="saveDetailLog()">
-        Save Exercise
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── ACTION SHEET ── -->
-<div id="modal-action" class="action-overlay">
-  <div class="action-backdrop" onclick="closeModal()"></div>
-  <div class="action-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-ex">
-      <div class="sheet-thumb"><img id="modal-img" src="" alt="" onerror="this.style.display='none'"></div>
-      <div>
-        <div id="modal-zh" class="sheet-zh"></div>
-        <div id="modal-en" class="sheet-en"></div>
-      </div>
-    </div>
-    <button class="action-btn" onclick="goToTips()">
-      <div class="action-icon tips-icon">
-        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-      </div>
-      <div>
-        <div>Tips <span style="font-size:12px;font-weight:400;color:var(--text-3)">運動提示</span></div>
-        <div class="action-sub">View form cues and technique</div>
-      </div>
-    </button>
-    <button class="action-btn" id="modal-log-btn" onclick="modalToggleExercise()">
-      <div class="action-icon log-icon">
-        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-      </div>
-      <div>
-        <div id="modal-log-label">Log <span style="font-size:12px;font-weight:400;color:var(--text-3)">記錄</span></div>
-        <div id="modal-log-sub" class="action-sub">Add to today's workout</div>
-      </div>
-    </button>
-    <button class="action-cancel" onclick="closeModal()">Cancel</button>
-  </div>
 </div>
 
 <!-- ── BOTTOM NAV ── -->
@@ -489,11 +317,11 @@
   </button>
   <button class="nav-btn" data-screen="log" onclick="showScreen('log')">
     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-    Log
+    Exercise
   </button>
-  <button class="nav-btn" data-screen="weight" onclick="showScreen('weight')">
-    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-    Weight
+  <button class="nav-btn" data-screen="stats" onclick="showScreen('stats')">
+    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    Body
   </button>
   <button class="nav-btn" data-screen="history" onclick="showScreen('history')">
     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -502,155 +330,39 @@
 </nav>
 
 <script>
-const IMG = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
-
 const EXERCISES = [
-  {
-    id:'backsquat', en:'Back Squat', zh:'背槓深蹲', muscle:'legs', img:'Barbell_Squat',
-    tips:[
-      {en:'Feet shoulder-width apart, toes turned slightly out (15–30°).',zh:'雙腳與肩同寬，腳尖略向外轉（15–30度）。'},
-      {en:'Brace your core and take a big breath before descending — hold it until you\'re back up.',zh:'下蹲前先收緊核心並深吸一口氣，直到站回頂部再吐氣。'},
-      {en:'Break at the hips and knees simultaneously; push your knees out in line with your toes.',zh:'髖部與膝蓋同時啟動，膝蓋向外推對齊腳尖方向，不要內夾。'},
-      {en:'Aim for at least parallel (thighs parallel to floor) — go deeper if mobility allows.',zh:'至少蹲到大腿與地面平行，若柔軟度允許可蹲更深。'},
-      {en:'Drive through the mid-foot and think "push the floor away" on the way up.',zh:'站起時重心落在腳掌中央，想像「把地板推開」。'},
-      {en:'Keep your chest up; if your torso collapses forward, the weight is too heavy.',zh:'保持胸部挺起；若上身前傾塌陷，代表重量過重或上背力量不足。'},
-    ]
-  },
-  {
-    id:'hacksquat', en:'Hack Squat', zh:'哈客深蹲', muscle:'legs', img:'Barbell_Hack_Squat',
-    tips:[
-      {en:'Foot placement higher on the platform reduces knee stress; lower increases quad range.',zh:'腳放高一點可減少膝蓋壓力；放低一點則增加股四頭的活動範圍。'},
-      {en:'Keep your lower back pressed firmly against the pad throughout the movement.',zh:'整個動作過程中，下背要緊貼靠墊，不要離開。'},
-      {en:'Push your knees out — don\'t let them cave inward.',zh:'膝蓋向外推，不要內扣。'},
-      {en:'Don\'t lock out your knees at the top; keep a slight bend to maintain tension.',zh:'頂部不要完全鎖死膝蓋，保持微彎以維持肌肉張力。'},
-      {en:'Control the descent — don\'t let the sled crash down.',zh:'控制下降速度，不要讓重量自由落下。'},
-      {en:'Pause briefly at the bottom for maximum quad stretch.',zh:'底部稍作停頓，讓股四頭獲得最大伸展。'},
-    ]
-  },
-  {
-    id:'splitsquat', en:'Split Squat', zh:'分腿蹲', muscle:'legs', img:'Barbell_Side_Split_Squat',
-    tips:[
-      {en:'Take a long enough stride so your front shin stays vertical when your rear knee nears the floor.',zh:'步伐要夠大，後膝接近地面時前小腿應保持垂直。'},
-      {en:'Lower your rear knee straight down — don\'t let it swing forward.',zh:'後膝直直往下沉，不要向前擺動。'},
-      {en:'Drive through the heel of your front foot to stand; the front leg does the work.',zh:'用前腳跟發力站起，前腳是主要用力的腿。'},
-      {en:'Keep your torso upright throughout — don\'t lean heavily forward.',zh:'全程保持上身直立，不要過度前傾。'},
-      {en:'Both hips should face forward; avoid rotating toward the front leg.',zh:'雙側髖部保持朝前，避免向前腳方向旋轉。'},
-      {en:'If your front knee drifts inward, slow down and reduce the weight.',zh:'若前膝往內偏移，請放慢速度並減輕重量。'},
-    ]
-  },
-  {
-    id:'stepup', en:'Step Up', zh:'單腳登階', muscle:'legs', img:'Barbell_Step_Ups',
-    tips:[
-      {en:'Step height should place your knee at roughly 90° when your foot is on the box.',zh:'台階高度應使腳踩上去時膝蓋呈約90度角。'},
-      {en:'Press through the heel of the working leg — not the toe.',zh:'用工作腿的腳跟發力往上踩，不是腳尖。'},
-      {en:'Do NOT push off the back foot; the trailing leg is just for balance.',zh:'不要用後腳借力；後腿僅用於維持平衡。'},
-      {en:'Fully extend the working leg at the top before stepping back down.',zh:'站到頂部時將工作腿完全伸直，再慢慢下來。'},
-      {en:'Control the descent slowly for extra time under tension.',zh:'緩慢控制下降，增加肌肉的張力時間。'},
-      {en:'Keep your hips level and torso tall — don\'t let your hip hike or drop.',zh:'保持髖部水平、上身直立，不要讓任一側髖部升高或下沉。'},
-    ]
-  },
-  {
-    id:'rdl', en:'Barbell RDL', zh:'槓鈴 RDL', muscle:'legs', img:'Romanian_Deadlift',
-    tips:[
-      {en:'This is a hip hinge, not a squat — maintain a slight, fixed knee bend throughout.',zh:'這是髖鉸鏈動作，不是深蹲——全程保持膝蓋微彎且固定不變。'},
-      {en:'Push your hips back as the bar travels down; keep the bar close to your thighs and shins.',zh:'槓下移時將髖部往後推；槓始終貼近大腿和小腿。'},
-      {en:'Stop when you feel a strong hamstring stretch (usually mid-shin).',zh:'感受到大腿後側強烈伸展時停止（通常約小腿中段）。'},
-      {en:'Keep your spine neutral from head to tailbone — no rounding the lower back.',zh:'從頭到尾骨保持脊椎中立，下背不要拱起。'},
-      {en:'Squeeze your glutes hard at the top to fully extend your hips.',zh:'頂部用力夾緊臀部，確保髖部完全伸展。'},
-      {en:'Shoulders should stay directly over or slightly in front of the bar at the bottom.',zh:'底部時肩膀應保持在槓的正上方或略微偏前。'},
-    ]
-  },
-  {
-    id:'bstance', en:'B-Stance Deadlift', zh:'B Stance 對側硬舉', muscle:'legs', img:'Stiff_Leg_Barbell_Good_Morning',
-    tips:[
-      {en:'The back foot is a kickstand only — place just your toes for balance, not for loading.',zh:'後腳只是平衡支撐，僅腳尖輕碰地面，不承受重量。'},
-      {en:'About 90% of the load should be on the front (working) leg.',zh:'約90%的負荷應由前腳（工作腿）承擔。'},
-      {en:'Hinge at the hip exactly like an RDL: spine neutral, weight close to body.',zh:'和RDL一樣進行髖鉸鏈：脊椎中立，重量貼近身體。'},
-      {en:'Feel the stretch primarily in the hamstring of the front leg.',zh:'主要感受前腿大腿後側的伸展。'},
-      {en:'Great for identifying and correcting left–right strength imbalances.',zh:'非常適合發現並改善左右腿的力量不均衡。'},
-      {en:'If balance is challenging, start with a dumbbell in the opposite hand.',zh:'若平衡困難，可先從對側手持啞鈴開始練習。'},
-    ]
-  },
-  {
-    id:'chestpress', en:'Chest Press', zh:'啞鈴・機械胸推', muscle:'upper', img:'Dumbbell_Bench_Press',
-    tips:[
-      {en:'Retract and depress your shoulder blades into the bench — this creates a stable, safe base.',zh:'將肩胛骨往後收攏並下壓貼緊椅背，建立穩定安全的支撐基礎。'},
-      {en:'Lower the weight to mid-chest with elbows at 45–75° from your torso.',zh:'將重量降至胸部中段，手肘與身體呈45–75度角（不要完全外展）。'},
-      {en:'Don\'t let elbows flare to 90° — this puts unnecessary strain on the shoulder joint.',zh:'不要讓手肘外展至90度，這會對肩關節造成不必要的壓力。'},
-      {en:'Press up and very slightly inward, squeezing the chest at the top.',zh:'往上並微微向內推，在頂部夾緊胸肌。'},
-      {en:'Control the descent — aim for 2 seconds down.',zh:'控制下降速度，目標約2秒。'},
-      {en:'Keep feet flat on the floor and drive them into the ground for full-body stability.',zh:'雙腳平踩地面並向下踩穩，建立全身穩定性。'},
-    ]
-  },
-  {
-    id:'incline', en:'Incline Press', zh:'槓鈴・啞鈴上胸推', muscle:'upper', img:'Barbell_Incline_Bench_Press_-_Medium_Grip',
-    tips:[
-      {en:'Set bench angle between 30–45°; steeper shifts work to front deltoids instead of upper chest.',zh:'椅背角度設在30–45度之間；角度太陡會讓前三角肌取代上胸發力。'},
-      {en:'Lower the bar or dumbbells to your upper chest — not your lower chest.',zh:'將槓或啞鈴降至上胸位置，而非下胸。'},
-      {en:'Keep your shoulder blades retracted and chest tall throughout.',zh:'全程保持肩胛骨收攏、胸部挺起。'},
-      {en:'Elbows travel at about 45–60° from your torso — not flared straight out.',zh:'手肘應與身體呈45–60度角，不要完全外展。'},
-      {en:'Think about pushing the ceiling away, not just the bar.',zh:'想像把天花板推開，而不只是推槓。'},
-      {en:'A slight lower-back arch is natural; excessive arch reduces chest range of motion.',zh:'下背輕微拱起是自然的；但過度拱背反而會縮小胸肌的活動範圍。'},
-    ]
-  },
-  {
-    id:'cablerow', en:'Cable Row', zh:'Cable 划船', muscle:'upper', img:'Seated_Cable_Rows',
-    tips:[
-      {en:'Sit tall with a proud chest — don\'t round your lower back.',zh:'坐直挺胸，不要駝背或圓腰。'},
-      {en:'Initiate the pull by depressing your shoulder blades first, then bend the elbows.',zh:'先將肩胛骨往下壓並收攏，再彎曲手肘完成拉動。'},
-      {en:'Squeeze your shoulder blades together hard at peak contraction — hold for 1 second.',zh:'在最大收縮時用力夾緊肩胛骨，保持1秒。'},
-      {en:'Avoid excessive forward lean on the return; a slight lean is okay.',zh:'回程時避免過度前傾；輕微前傾是可以接受的。'},
-      {en:'Control the stretch forward slowly — feel your lats and rhomboids lengthen.',zh:'緩慢控制向前伸展，感受背闊肌與菱形肌的延伸。'},
-      {en:'Elbows should stay close to your sides, not flaring outward.',zh:'手肘應貼近身體兩側，不要向外張開。'},
-    ]
-  },
-  {
-    id:'shoulderpress', en:'Shoulder Press', zh:'啞鈴・機械肩推', muscle:'upper', img:'Dumbbell_Shoulder_Press',
-    tips:[
-      {en:'Position elbows slightly in front of your body (not directly to the side) to protect the shoulder.',zh:'手肘稍微位於身體前方（不要完全側展），以保護肩關節。'},
-      {en:'Brace your core and avoid arching your lower back as you press overhead.',zh:'收緊核心，推舉時避免下背過度拱起。'},
-      {en:'Press directly overhead until arms are nearly fully extended.',zh:'直接往頭頂推舉，直到手臂近乎完全伸直。'},
-      {en:'Lower dumbbells to ear level only — no lower — to keep tension on the deltoids.',zh:'啞鈴降至耳朵高度即可，不要再低，以維持三角肌張力。'},
-      {en:'Keep wrists stacked over elbows at all times.',zh:'全程保持手腕在手肘正上方。'},
-      {en:'Don\'t use leg drive unless intentionally performing a push press.',zh:'除非刻意做推舉（push press），否則不要用腿部借力。'},
-    ]
-  },
-  {
-    id:'straightarm', en:'Straight Arm Pulldown', zh:'直臂下壓', muscle:'upper', img:'Straight-Arm_Pulldown',
-    tips:[
-      {en:'Keep arms straight with just a very slight soft elbow — no bending throughout the rep.',zh:'手臂全程保持伸直，只允許非常輕微的軟肘，不可彎曲。'},
-      {en:'Lean forward slightly from the hips (about 15–20°) for better range of motion.',zh:'從髖部輕微前傾（約15–20度），以獲得更大的活動範圍。'},
-      {en:'Think "drive elbows down and back toward your hips" — not just pushing the bar down.',zh:'想著「把手肘往下、往後推向髖部」，而不只是把槓往下壓。'},
-      {en:'You should feel this in your lats, not triceps. If triceps fire, check your elbows aren\'t bending.',zh:'應感受到背闊肌深處發力，而非三頭肌。若感覺三頭肌用力，請確認手肘是否彎曲。'},
-      {en:'Control the return to full overhead extension for maximum lat stretch.',zh:'回程控制至手臂完全上舉，讓背闊肌獲得最大伸展。'},
-      {en:'Isolation exercise — use a weight that lets you feel the muscle, not ego-lift.',zh:'這是孤立動作，使用能感受到肌肉的重量，不要逞強加重。'},
-    ]
-  },
-  {
-    id:'pulldown', en:'Lat Pulldown', zh:'滑輪下拉', muscle:'upper', img:'Wide-Grip_Lat_Pulldown',
-    tips:[
-      {en:'Lean back slightly (about 10–15°) — not excessively.',zh:'略微後傾（約10–15度），不要過度後仰。'},
-      {en:'Before pulling, depress your shoulder blades — pull shoulders down away from your ears first.',zh:'拉之前先將肩胛骨下壓，把肩膀往下遠離耳朵。'},
-      {en:'Pull the bar to your upper chest — never behind your neck.',zh:'將槓拉至上胸位置，絕對不要拉到頸後。'},
-      {en:'Think "elbows to back pockets" to fully engage the lats.',zh:'想著「把手肘往後褲袋方向拉」，以充分啟動背闊肌。'},
-      {en:'Control the return slowly — the stretch at the top builds lat length over time.',zh:'緩慢控制回程，頂部的伸展能長期增加背闊肌的長度。'},
-      {en:'Avoid momentum or excessive body swing to move the weight.',zh:'避免利用慣性或過度晃動身體來移動重量。'},
-    ]
-  },
+  { id:'sideplank',     en:'Side Plank',             zh:'側棒式',            muscle:'warmup' },
+  { id:'deadbug',       en:'Dead Bug',                zh:'死蟲式',            muscle:'warmup' },
+  { id:'windmill',      en:'Single-Leg Windmill',     zh:'單腳風車',          muscle:'warmup' },
+  { id:'catcow',        en:'Cat-Cow',                 zh:'貓牛式',            muscle:'warmup' },
+  { id:'romanchairext', en:'Roman Chair Extension',   zh:'羅馬椅',            muscle:'warmup' },
+  { id:'backsquat',     en:'Back Squat',              zh:'背槓深蹲',          muscle:'legs'   },
+  { id:'hacksquat',     en:'Hack Squat',              zh:'哈客深蹲',          muscle:'legs'   },
+  { id:'splitsquat',    en:'Split Squat',             zh:'分腿蹲',            muscle:'legs'   },
+  { id:'stepup',        en:'Step Up',                 zh:'單腳登階',          muscle:'legs'   },
+  { id:'rdl',           en:'Barbell RDL',             zh:'槓鈴 RDL',          muscle:'legs'   },
+  { id:'bstance',       en:'B-Stance Deadlift',       zh:'B Stance 對側硬舉', muscle:'legs'   },
+  { id:'chestpress',    en:'Chest Press',             zh:'啞鈴・機械胸推',    muscle:'upper'  },
+  { id:'incline',       en:'Incline Press',           zh:'槓鈴・啞鈴上胸推',  muscle:'upper'  },
+  { id:'cablerow',      en:'Cable Row',               zh:'Cable 划船',        muscle:'upper'  },
+  { id:'shoulderpress', en:'Shoulder Press',          zh:'啞鈴・機械肩推',    muscle:'upper'  },
+  { id:'straightarm',   en:'Straight Arm Pulldown',   zh:'直臂下壓',          muscle:'upper'  },
+  { id:'pulldown',      en:'Lat Pulldown',            zh:'滑輪下拉',          muscle:'upper'  },
 ];
 
 const DB = {
   getSessions:  () => JSON.parse(localStorage.getItem('st_sessions')    || '[]'),
   saveSessions: v  => localStorage.setItem('st_sessions',    JSON.stringify(v)),
-  getWeights:   () => JSON.parse(localStorage.getItem('st_bodyweights') || '[]'),
-  saveWeights:  v  => localStorage.setItem('st_bodyweights', JSON.stringify(v)),
+  getStats:     () => JSON.parse(localStorage.getItem('st_bodystats')   || '[]'),
+  saveStats:    v  => localStorage.setItem('st_bodystats',   JSON.stringify(v)),
 };
 
-let selectedExercises = [];
-let weightChart = null;
-let _modalId = null;
-let _detailId = null;
-let _detailBack = 'log';
+let logState    = {};
+let statCharts  = {};
+let homeActivityChart = null;
+let homeWeightChart   = null;
+let calYear  = new Date().getFullYear();
+let calMonth = new Date().getMonth();
 
 // ── NAVIGATION ──
 function showScreen(name) {
@@ -660,12 +372,11 @@ function showScreen(name) {
   const nb = document.querySelector(`.nav-btn[data-screen="${name}"]`);
   if (nb) nb.classList.add('active');
   if (name === 'home')    renderHome();
-  if (name === 'weight')  renderWeightScreen();
+  if (name === 'stats')   renderStatsScreen();
   if (name === 'history') renderHistory();
-  if (name === 'log')     renderPicker();
+  if (name === 'log')     renderLogScreen();
 }
 
-// ── GREETING ──
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 12) return 'Good morning,';
@@ -673,42 +384,37 @@ function getGreeting() {
   return 'Good evening,';
 }
 
+function getStreak() {
+  const sessions = DB.getSessions();
+  if (!sessions.length) return 0;
+  const dates = [...new Set(sessions.map(s => s.date))].sort().reverse();
+  const today     = new Date().toLocaleDateString('en-CA');
+  const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
+  if (dates[0] !== today && dates[0] !== yesterday) return 0;
+  let streak = 1;
+  for (let i = 1; i < dates.length; i++) {
+    const a = new Date(dates[i-1] + 'T00:00:00');
+    const b = new Date(dates[i]   + 'T00:00:00');
+    if ((a - b) / 86400000 === 1) streak++;
+    else break;
+  }
+  return streak;
+}
+
 // ── HOME ──
 function renderHome() {
   document.getElementById('greeting-text').textContent = getGreeting();
 
-  // Stat: this week sessions
-  const now = Date.now();
-  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
-  const weekSessions = DB.getSessions().filter(s => s.timestamp >= weekAgo).length;
-  document.getElementById('stat-sessions').innerHTML =
-    `${weekSessions} <span class="stat-unit">session${weekSessions !== 1 ? 's' : ''}</span>`;
+  const streak = getStreak();
+  const badge  = document.getElementById('streak-badge');
+  if (streak >= 2) { badge.textContent = `🔥 ${streak}-day streak`; badge.style.display = 'inline-flex'; }
+  else badge.style.display = 'none';
 
-  // Stat: last body weight
-  const weights = DB.getWeights().sort((a, b) => a.date.localeCompare(b.date));
-  const lastBw = weights.length ? weights[weights.length - 1] : null;
-  document.getElementById('stat-weight').innerHTML = lastBw
-    ? `${lastBw.weight} <span class="stat-unit">kg</span>`
-    : `-- <span class="stat-unit">kg</span>`;
+  renderHomeCharts();
 
-  // Exercise chips
-  const chipsEl = document.getElementById('exercise-chips');
-  chipsEl.innerHTML = EXERCISES.map(e => `
-    <div class="chip" onclick="openActionSheet('${e.id}')">
-      <div class="chip-img">
-        <img src="${IMG}${e.img}/0.jpg" alt="${e.en}" onerror="this.style.display='none'">
-      </div>
-      <div class="chip-en">${e.en}</div>
-      <div class="chip-zh">${e.zh}</div>
-    </div>`).join('');
-
-  // Recent sessions
   const sessions = DB.getSessions().slice(-5).reverse();
   const el = document.getElementById('recent-sessions');
-  if (!sessions.length) {
-    el.innerHTML = '<div class="empty-state">No sessions yet — start your first workout!</div>';
-    return;
-  }
+  if (!sessions.length) { el.innerHTML = '<div class="empty-state">No sessions yet — start your first workout!</div>'; return; }
   el.innerHTML = sessions.map(s => `
     <div class="session-item">
       <div class="session-top">
@@ -719,310 +425,385 @@ function renderHome() {
     </div>`).join('');
 }
 
-// ── PICKER ──
-function startWorkout() {
-  selectedExercises = [];
-  showScreen('log');
+function renderHomeCharts() {
+  const today = new Date();
+  const days  = Array.from({length:14}, (_, i) => {
+    const d = new Date(today); d.setDate(today.getDate() - (13 - i));
+    return d.toLocaleDateString('en-CA');
+  });
+  const sessions = DB.getSessions();
+  const actData  = days.map(day =>
+    sessions.filter(s => s.date === day).reduce((acc, s) => acc + s.exercises.length, 0));
+  const dayNames  = ['S','M','T','W','T','F','S'];
+  const actLabels = days.map(d => dayNames[new Date(d + 'T00:00:00').getDay()]);
+
+  const actCanvas = document.getElementById('home-activity-chart');
+  const actEmpty  = document.getElementById('home-activity-empty');
+  if (!sessions.length) { actCanvas.style.display='none'; actEmpty.style.display=''; }
+  else {
+    actCanvas.style.display=''; actEmpty.style.display='none';
+    if (homeActivityChart) homeActivityChart.destroy();
+    homeActivityChart = new Chart(actCanvas.getContext('2d'), {
+      type:'bar',
+      data:{ labels:actLabels, datasets:[{ data:actData,
+        backgroundColor: actData.map(v => v>0 ? 'rgba(59,109,17,0.75)' : 'rgba(0,0,0,0.07)'),
+        borderRadius:3, borderSkipped:false }] },
+      options:{ responsive:true, plugins:{ legend:{display:false},
+        tooltip:{callbacks:{label: ctx => ctx.parsed.y > 0
+          ? `${ctx.parsed.y} exercise${ctx.parsed.y>1?'s':''}` : 'Rest day'}}},
+        scales:{ x:{ticks:{color:'#9e9e99',font:{size:9}},grid:{display:false},border:{display:false}},
+                 y:{display:false,min:0} } }
+    });
+  }
+
+  const allStats    = DB.getStats().sort((a,b) => a.date.localeCompare(b.date));
+  const withWeight  = allStats.filter(b => b.weight != null).slice(-10);
+  const wtCanvas    = document.getElementById('home-weight-chart');
+  const wtEmpty     = document.getElementById('home-weight-empty');
+  if (withWeight.length < 2) { wtCanvas.style.display='none'; wtEmpty.style.display=''; }
+  else {
+    wtCanvas.style.display=''; wtEmpty.style.display='none';
+    if (homeWeightChart) homeWeightChart.destroy();
+    homeWeightChart = new Chart(wtCanvas.getContext('2d'), {
+      type:'line',
+      data:{ labels:withWeight.map(b=>b.date.slice(5)),
+        datasets:[{ data:withWeight.map(b=>b.weight), borderColor:'#3B6D11',
+          backgroundColor:'rgba(59,109,17,0.08)', tension:0.3, fill:true,
+          pointBackgroundColor:'#3B6D11', pointRadius:3, borderWidth:2 }] },
+      options:{ responsive:true, plugins:{ legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} kg`}}},
+        scales:{ x:{ticks:{color:'#9e9e99',font:{size:9}},grid:{display:false},border:{display:false}},
+                 y:{ticks:{color:'#9e9e99',font:{size:9}},grid:{color:'rgba(0,0,0,0.04)'},border:{display:false}} } }
+    });
+  }
 }
 
-function renderPicker() {
-  const legs  = EXERCISES.filter(e => e.muscle === 'legs');
-  const upper = EXERCISES.filter(e => e.muscle === 'upper');
-  document.getElementById('leg-exercises').innerHTML   = legs.map(exerciseCard).join('');
-  document.getElementById('upper-exercises').innerHTML = upper.map(exerciseCard).join('');
-  document.getElementById('log-step-pick').style.display = '';
-  document.getElementById('log-step-sets').style.display = 'none';
-  updatePickSummary();
+// ── BODY STATS (shared save logic) ──
+function saveStatsEntry(date, weight, fat, muscle) {
+  const stats = DB.getStats();
+  const entry = { date };
+  if (weight != null) entry.weight = weight;
+  if (fat    != null) entry.fat    = fat;
+  if (muscle != null) entry.muscle = muscle;
+  const idx = stats.findIndex(b => b.date === date);
+  if (idx > -1) Object.assign(stats[idx], entry);
+  else stats.push(entry);
+  DB.saveStats(stats);
 }
 
-function exerciseCard(e) {
-  const sel = selectedExercises.some(s => s.id === e.id);
+function logBodyStats() {
+  const date   = document.getElementById('home-bc-date').value;
+  const weight = parseFloat(document.getElementById('home-bc-weight').value) || null;
+  const fat    = parseFloat(document.getElementById('home-bc-fat').value)    || null;
+  const muscle = parseFloat(document.getElementById('home-bc-muscle').value) || null;
+  if (!date || (!weight && !fat && !muscle)) { showToast('Enter at least one value'); return; }
+  saveStatsEntry(date, weight, fat, muscle);
+  document.getElementById('home-bc-weight').value = '';
+  document.getElementById('home-bc-fat').value    = '';
+  document.getElementById('home-bc-muscle').value = '';
+  showToast('Stats saved!');
+  renderHomeCharts();
+}
+
+// ── STATS SCREEN ──
+function renderStatsScreen() {
+  document.getElementById('bw-date').value = new Date().toISOString().split('T')[0];
+  const all = DB.getStats().sort((a,b) => a.date.localeCompare(b.date));
+
+  renderStatChart('weight-chart', 'weight-chart-empty',
+    all.filter(b => b.weight != null),
+    b => b.weight, '#3B6D11', 'rgba(59,109,17,0.08)', v => `${v} kg`);
+  renderStatChart('fat-chart', 'fat-chart-empty',
+    all.filter(b => b.fat != null),
+    b => b.fat, '#D97706', 'rgba(217,119,6,0.08)', v => `${v}%`);
+  renderStatChart('muscle-chart', 'muscle-chart-empty',
+    all.filter(b => b.muscle != null),
+    b => b.muscle, '#2563EB', 'rgba(37,99,235,0.08)', v => `${v} kg`);
+
+  const list = document.getElementById('stats-list');
+  if (!all.length) { list.innerHTML = '<div class="empty-state">No stats yet</div>'; return; }
+  list.innerHTML = all.slice().reverse().slice(0,20).map(b => {
+    const pills = [];
+    if (b.weight != null) pills.push(`<span class="stats-pill">${b.weight}<small>kg 體重</small></span>`);
+    if (b.fat    != null) pills.push(`<span class="stats-pill">${b.fat}<small>% 體脂</small></span>`);
+    if (b.muscle != null) pills.push(`<span class="stats-pill">${b.muscle}<small>kg 肌肉</small></span>`);
+    return `<div class="stats-entry">
+      <div class="stats-entry-date">${b.date}</div>
+      <div class="stats-entry-vals">${pills.join('')}</div>
+      <button class="del-btn" onclick="deleteStats('${b.date}')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderStatChart(canvasId, emptyId, data, valueFn, color, bg, labelFn) {
+  const canvas = document.getElementById(canvasId);
+  const empty  = document.getElementById(emptyId);
+  const recent = data.slice(-20);
+  if (recent.length < 2) { canvas.style.display='none'; empty.style.display=''; return; }
+  canvas.style.display=''; empty.style.display='none';
+  if (statCharts[canvasId]) statCharts[canvasId].destroy();
+  statCharts[canvasId] = new Chart(canvas.getContext('2d'), {
+    type:'line',
+    data:{ labels: recent.map(b=>b.date.slice(5)),
+      datasets:[{ data: recent.map(valueFn), borderColor:color, backgroundColor:bg,
+        tension:0.3, fill:true, pointBackgroundColor:color, pointRadius:4, borderWidth:2 }] },
+    options:{ responsive:true,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>labelFn(ctx.parsed.y)}}},
+      scales:{ x:{ticks:{color:'#9e9e99',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}},
+               y:{ticks:{color:'#9e9e99',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}} } }
+  });
+}
+
+function addBodyStats() {
+  const date   = document.getElementById('bw-date').value;
+  const weight = parseFloat(document.getElementById('bw-weight').value) || null;
+  const fat    = parseFloat(document.getElementById('bw-fat').value)    || null;
+  const muscle = parseFloat(document.getElementById('bw-muscle').value) || null;
+  if (!date || (!weight && !fat && !muscle)) { showToast('Enter at least one value'); return; }
+  saveStatsEntry(date, weight, fat, muscle);
+  document.getElementById('bw-weight').value = '';
+  document.getElementById('bw-fat').value    = '';
+  document.getElementById('bw-muscle').value = '';
+  renderStatsScreen();
+  showToast('Saved!');
+}
+
+function deleteStats(date) {
+  DB.saveStats(DB.getStats().filter(b => b.date !== date));
+  renderStatsScreen();
+}
+
+// ── LOG SCREEN ──
+function renderLogScreen() {
+  logState = {};
+  document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+  const warmup = EXERCISES.filter(e => e.muscle === 'warmup');
+  const legs   = EXERCISES.filter(e => e.muscle === 'legs');
+  const upper  = EXERCISES.filter(e => e.muscle === 'upper');
+  document.getElementById('log-warmup-exercises').innerHTML = warmup.map(buildLogCard).join('');
+  document.getElementById('log-leg-exercises').innerHTML    = legs.map(buildLogCard).join('');
+  document.getElementById('log-upper-exercises').innerHTML  = upper.map(buildLogCard).join('');
+  updateLogFooter();
+}
+
+function getLastSets(exerciseId) {
+  const sessions = DB.getSessions().slice().reverse();
+  for (const s of sessions) {
+    const ex = s.exercises.find(e => e.id === exerciseId);
+    if (ex) return ex.sets;
+  }
+  return null;
+}
+
+function buildLogCard(e) {
+  const lastSets = getLastSets(e.id);
+  const isTimed  = e.muscle === 'warmup';
+
+  let hintHtml = '';
+  if (lastSets && lastSets.some(s => s.reps > 0 || s.weight > 0)) {
+    const parts = lastSets
+      .map((s,i) => (s.reps>0||s.weight>0)
+        ? (isTimed ? `S${i+1}: ${s.reps}s` : `S${i+1}: ${s.reps}×${s.weight}kg`) : null)
+      .filter(Boolean).join('  ·  ');
+    hintHtml = `<div class="last-hint"><strong>上次</strong>  ${parts}</div>`;
+  }
+
+  const tableHead = isTimed
+    ? `<div class="set-table-head" style="grid-template-columns:48px 1fr"><span>Set</span><span>Sec / Reps</span></div>`
+    : `<div class="set-table-head"><span>Set</span><span>Reps</span><span>Weight (kg)<br><span style="font-size:9px;font-weight:400;color:var(--text-3)">雙邊總重</span></span></div>`;
+
+  const rows = [1,2,3].map(i => {
+    const last = lastSets ? lastSets[i-1] : null;
+    if (isTimed) return `<div class="set-row" style="grid-template-columns:48px 1fr">
+      <div class="set-num">Set ${i}</div>
+      <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
+        placeholder="${last && last.reps>0 ? last.reps : 'sec'}" min="0">
+    </div>`;
+    return `<div class="set-row">
+      <div class="set-num">Set ${i}</div>
+      <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
+        placeholder="${last && last.reps>0 ? last.reps : 'reps'}" min="0">
+      <input type="number" class="set-input" id="linput-${e.id}-kg-${i}"
+        placeholder="${last && last.weight>0 ? last.weight : 'kg'}" min="0" step="0.5">
+    </div>`;
+  }).join('');
+
   return `
-    <div class="ex-card ${sel ? 'selected' : ''}" onclick="openActionSheet('${e.id}')">
-      <div class="ex-card-img" id="wrap-${e.id}">
-        <img src="${IMG}${e.img}/0.jpg" alt="${e.en}"
-             onerror="document.getElementById('wrap-${e.id}').classList.add('img-failed')">
-        <div class="ex-fallback">${e.zh}<br><span style="font-size:9px;color:var(--text-3)">${e.en}</span></div>
-      </div>
-      ${sel ? `<div class="ex-check"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>` : ''}
-      <div class="ex-card-body">
-        <div class="ex-card-zh">${e.zh}</div>
-        <div class="ex-card-en">${e.en}</div>
+    <div class="log-ex-card" id="logcard-${e.id}">
+      <button class="log-ex-head" onclick="toggleLogCard('${e.id}')">
+        <div class="log-ex-info">
+          <div class="log-ex-zh">${e.zh}</div>
+          <div class="log-ex-en">${e.en}</div>
+          <div class="log-ex-saved-summary" id="saved-summary-${e.id}" style="display:none"></div>
+        </div>
+        <div class="log-ex-badge">
+          <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+      </button>
+      <div class="log-ex-body">
+        ${hintHtml}${tableHead}${rows}
+        <div style="margin-top:12px">
+          <button class="btn-primary" style="width:100%;height:44px;border-radius:10px;font-size:15px"
+            onclick="saveLogExercise('${e.id}')">Save</button>
+        </div>
       </div>
     </div>`;
 }
 
-function toggleExercise(id) {
-  const ex  = EXERCISES.find(e => e.id === id);
-  const idx = selectedExercises.findIndex(e => e.id === id);
-  if (idx > -1) selectedExercises.splice(idx, 1);
-  else selectedExercises.push(ex);
-  renderPicker();
+function toggleLogCard(id) {
+  document.getElementById(`logcard-${id}`).classList.toggle('open');
 }
 
-function updatePickSummary() {
-  const total = selectedExercises.length;
-  const ready = total >= 1;
-  const btn = document.getElementById('start-log-btn');
-  const sum = document.getElementById('pick-summary');
-  sum.textContent = total ? `${total} exercise${total > 1 ? 's' : ''} selected` : 'Select at least 1 exercise';
-  sum.className = 'pick-summary' + (ready ? ' ready' : '');
-  btn.disabled = !ready;
+function isPR(exerciseId, newSets) {
+  const ex = EXERCISES.find(e => e.id === exerciseId);
+  if (ex?.muscle === 'warmup') return false;
+  const newMax = Math.max(0, ...newSets.map(s => s.weight));
+  if (newMax === 0) return false;
+  let prevBest = 0;
+  for (const s of DB.getSessions()) {
+    const found = s.exercises.find(e => e.id === exerciseId);
+    if (found) found.sets.forEach(set => { if (set.weight > prevBest) prevBest = set.weight; });
+  }
+  return newMax > prevBest;
 }
 
-// ── ACTION SHEET ──
-function openActionSheet(id) {
-  const e = EXERCISES.find(ex => ex.id === id);
-  _modalId = id;
-  document.getElementById('modal-img').src = `${IMG}${e.img}/0.jpg`;
-  document.getElementById('modal-zh').textContent = e.zh;
-  document.getElementById('modal-en').textContent = e.en;
-  const sel = selectedExercises.some(s => s.id === id);
-  document.getElementById('modal-log-label').innerHTML = sel
-    ? `Remove <span style="font-size:12px;font-weight:400;color:var(--text-3)">移除</span>`
-    : `Log <span style="font-size:12px;font-weight:400;color:var(--text-3)">記錄</span>`;
-  document.getElementById('modal-log-sub').textContent = sel
-    ? 'Remove from today\'s workout'
-    : 'Add to today\'s workout';
-  document.getElementById('modal-action').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('modal-action').classList.remove('open');
-  _modalId = null;
-}
-
-function goToTips() {
-  const id = _modalId;
-  closeModal();
-  const currentScreen = document.querySelector('.screen.active')?.id?.replace('screen-', '') || 'log';
-  _detailBack = (currentScreen === 'detail') ? 'log' : currentScreen;
-  showDetail(id, 'tips');
-}
-
-function modalToggleExercise() {
-  const id = _modalId;
-  closeModal();
-  toggleExercise(id);
-}
-
-// ── DETAIL SCREEN ──
-function showDetail(id, tab) {
-  _detailId = id;
-  const e = EXERCISES.find(ex => ex.id === id);
-  document.getElementById('detail-zh').textContent = e.zh;
-  document.getElementById('detail-en').textContent = e.en;
-  document.getElementById('detail-hero-img').src = `${IMG}${e.img}/0.jpg`;
-  document.getElementById('detail-tips-list').innerHTML = e.tips.map((tip, i) => `
-    <div class="tip-item">
-      <div class="tip-num">${i + 1}</div>
-      <div>
-        <div class="tip-en">${tip.en}</div>
-        <div class="tip-zh">${tip.zh}</div>
-      </div>
-    </div>`).join('');
-  document.getElementById('detail-set-rows').innerHTML = [1,2,3].map(i => `
-    <div class="set-row">
-      <div class="set-num">Set ${i}</div>
-      <input type="number" class="set-input" id="dlog-reps-${i}" placeholder="reps" min="0">
-      <input type="number" class="set-input" id="dlog-kg-${i}" placeholder="kg" min="0" step="0.5">
-    </div>`).join('');
-
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('screen-detail').classList.add('active');
-  switchTab(tab || 'tips');
-}
-
-function switchTab(tab) {
-  document.getElementById('tab-tips').classList.toggle('active', tab === 'tips');
-  document.getElementById('tab-log').classList.toggle('active', tab === 'log');
-  document.getElementById('pane-tips').style.display = tab === 'tips' ? '' : 'none';
-  document.getElementById('pane-log').style.display  = tab === 'log'  ? '' : 'none';
-}
-
-function backFromDetail() {
-  showScreen(_detailBack || 'log');
-}
-
-function saveDetailLog() {
-  const e = EXERCISES.find(ex => ex.id === _detailId);
-  const sets = [1,2,3].map(i => ({
-    reps:   parseInt(document.getElementById(`dlog-reps-${i}`)?.value) || 0,
-    weight: parseFloat(document.getElementById(`dlog-kg-${i}`)?.value) || 0,
+function saveLogExercise(id) {
+  const ex      = EXERCISES.find(e => e.id === id);
+  const isTimed = ex.muscle === 'warmup';
+  const sets    = [1,2,3].map(i => ({
+    reps:   parseInt(document.getElementById(`linput-${id}-reps-${i}`)?.value) || 0,
+    weight: isTimed ? 0 : (parseFloat(document.getElementById(`linput-${id}-kg-${i}`)?.value) || 0),
   }));
-  const hasData = sets.some(s => s.reps > 0 || s.weight > 0);
-  if (!hasData) { showToast('Enter at least one set'); return; }
-  const session = {
-    date: new Date().toLocaleDateString('en-CA'),
-    timestamp: Date.now(),
-    exercises: [{ id: e.id, en: e.en, zh: e.zh, sets }]
-  };
-  const sessions = DB.getSessions();
-  sessions.push(session);
+  if (!sets.some(s => s.reps>0||s.weight>0)) { showToast('Enter at least one set'); return; }
+
+  const pr = isPR(id, sets);
+  logState[id] = { sets, saved:true };
+
+  const card = document.getElementById(`logcard-${id}`);
+  card.classList.add('saved');
+  card.classList.remove('open');
+
+  const nonEmpty  = sets.filter(s => s.reps>0||s.weight>0);
+  const maxW      = Math.max(0, ...sets.map(s => s.weight));
+  const summaryEl = document.getElementById(`saved-summary-${id}`);
+  if (summaryEl) {
+    summaryEl.textContent = isTimed
+      ? `${nonEmpty.length} set${nonEmpty.length!==1?'s':''} logged`
+      : `${nonEmpty.length} set${nonEmpty.length!==1?'s':''}${maxW>0 ? ` · max ${maxW} kg` : ''}`;
+    summaryEl.style.display = '';
+  }
+
+  if (pr) showToast('🏆 新個人紀錄 New PR!', true);
+  updateLogFooter();
+}
+
+function updateLogFooter() {
+  const count   = Object.values(logState).filter(v => v.saved).length;
+  const countEl = document.getElementById('log-footer-count');
+  const btn     = document.getElementById('finish-workout-btn');
+  countEl.textContent = count === 0 ? 'Tap an exercise above to start' : `${count} exercise${count>1?'s':''} saved`;
+  countEl.className   = 'log-footer-count' + (count>0 ? ' ready' : '');
+  btn.disabled = count === 0;
+}
+
+function finishWorkout() {
+  const exercises = Object.keys(logState).filter(id => logState[id]?.saved).map(id => {
+    const ex = EXERCISES.find(e => e.id === id);
+    return { id:ex.id, en:ex.en, zh:ex.zh, sets:logState[id].sets };
+  });
+  if (!exercises.length) return;
+  const chosenDate = document.getElementById('log-date').value || new Date().toLocaleDateString('en-CA');
+  const sessions   = DB.getSessions();
+  sessions.push({ date:chosenDate, timestamp:new Date(chosenDate).getTime(), exercises });
   DB.saveSessions(sessions);
-  showToast('Exercise saved');
-  showScreen('home');
-}
-
-// ── SET LOGGING ──
-function startLogging() {
-  document.getElementById('log-step-pick').style.display = 'none';
-  document.getElementById('log-step-sets').style.display = '';
-  document.getElementById('exercise-set-cards').innerHTML = selectedExercises.map(e => `
-    <div class="set-card">
-      <div class="set-card-head">
-        <div class="set-thumb">
-          <img src="${IMG}${e.img}/0.jpg" alt="${e.en}" onerror="this.style.display='none'">
-        </div>
-        <div>
-          <div class="set-zh">${e.zh}</div>
-          <div class="set-en">${e.en}</div>
-        </div>
-      </div>
-      <div class="set-table">
-        <div class="set-table-head"><span>Set</span><span>Reps</span><span>Weight (kg)</span></div>
-        ${[1,2,3].map(i => `
-        <div class="set-row">
-          <div class="set-num">Set ${i}</div>
-          <input type="number" class="set-input" id="${e.id}-reps-${i}" placeholder="reps" min="0">
-          <input type="number" class="set-input" id="${e.id}-kg-${i}" placeholder="kg" min="0" step="0.5">
-        </div>`).join('')}
-      </div>
-    </div>`).join('');
-}
-
-function backToPick() {
-  document.getElementById('log-step-pick').style.display = '';
-  document.getElementById('log-step-sets').style.display = 'none';
-}
-
-function saveWorkout() {
-  const session = {
-    date: new Date().toLocaleDateString('en-CA'),
-    timestamp: Date.now(),
-    exercises: selectedExercises.map(e => ({
-      id: e.id, en: e.en, zh: e.zh,
-      sets: [1,2,3].map(i => ({
-        reps:   parseInt(document.getElementById(`${e.id}-reps-${i}`)?.value)   || 0,
-        weight: parseFloat(document.getElementById(`${e.id}-kg-${i}`)?.value) || 0,
-      }))
-    }))
-  };
-  const sessions = DB.getSessions();
-  sessions.push(session);
-  DB.saveSessions(sessions);
-  selectedExercises = [];
+  logState = {};
   showToast('Workout saved!');
   showScreen('home');
 }
 
-// ── BODY WEIGHT ──
-function renderWeightScreen() {
-  document.getElementById('bw-date').value = new Date().toISOString().split('T')[0];
-  const weights = DB.getWeights().sort((a, b) => a.date.localeCompare(b.date));
-  const wrap  = document.getElementById('weight-chart-wrap');
-  const empty = document.getElementById('weight-chart-empty');
+// ── HISTORY CALENDAR ──
+function renderCalendar() {
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent = `${MONTHS[calMonth]} ${calYear}`;
+  const workoutDates = new Set(DB.getSessions().map(s => s.date));
+  const today    = new Date().toLocaleDateString('en-CA');
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay  = new Date(calYear, calMonth+1, 0);
 
-  if (weights.length < 2) {
-    wrap.style.display = 'none';
-    empty.style.display = '';
-  } else {
-    wrap.style.display = '';
-    empty.style.display = 'none';
-    if (weightChart) weightChart.destroy();
-    const recent = weights.slice(-20);
-    weightChart = new Chart(document.getElementById('weight-chart').getContext('2d'), {
-      type: 'line',
-      data: {
-        labels: recent.map(b => b.date.slice(5)),
-        datasets: [{
-          data: recent.map(b => b.weight),
-          borderColor: '#3B6D11',
-          backgroundColor: 'rgba(59,109,17,0.08)',
-          tension: 0.3, fill: true,
-          pointBackgroundColor: '#3B6D11', pointRadius: 4,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color:'#9e9e99', font:{size:11} }, grid: { color:'rgba(0,0,0,0.05)' } },
-          y: { ticks: { color:'#9e9e99', font:{size:11} }, grid: { color:'rgba(0,0,0,0.05)' } }
-        }
-      }
-    });
+  const cells = [];
+  for (let i=0; i<firstDay.getDay(); i++) {
+    const d = new Date(calYear, calMonth, -(firstDay.getDay()-i-1));
+    cells.push({ date:d.toLocaleDateString('en-CA'), day:d.getDate(), dim:true });
+  }
+  for (let d=1; d<=lastDay.getDate(); d++) {
+    const date = new Date(calYear, calMonth, d).toLocaleDateString('en-CA');
+    cells.push({ date, day:d, dim:false });
+  }
+  const trail = 6 - lastDay.getDay();
+  for (let i=1; i<=trail; i++) {
+    const d = new Date(calYear, calMonth+1, i);
+    cells.push({ date:d.toLocaleDateString('en-CA'), day:d.getDate(), dim:true });
   }
 
-  document.getElementById('weight-list').innerHTML =
-    weights.slice().reverse().slice(0, 15).map(b => `
-      <div class="weight-entry">
-        <span class="weight-date">${b.date}</span>
-        <div style="display:flex;align-items:center;gap:12px">
-          <span class="weight-val">${b.weight}<span class="weight-unit">kg</span></span>
-          <button class="del-btn" onclick="deleteWeight('${b.date}')">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-      </div>`).join('')
-    || '<div class="empty-state">No weight entries yet</div>';
+  const grid    = document.getElementById('cal-grid');
+  const headers = Array.from(grid.querySelectorAll('.cal-day-hdr'));
+  grid.innerHTML = '';
+  headers.forEach(h => grid.appendChild(h));
+  cells.forEach(c => {
+    const div    = document.createElement('div');
+    const worked = !c.dim && workoutDates.has(c.date);
+    const isToday = c.date === today;
+    div.className = ['cal-day', c.dim?'dim':'', worked?'worked':'', isToday&&!worked?'today':''].filter(Boolean).join(' ');
+    div.textContent = c.day;
+    grid.appendChild(div);
+  });
 }
 
-function addWeight() {
-  const date   = document.getElementById('bw-date').value;
-  const weight = parseFloat(document.getElementById('bw-weight').value);
-  if (!date || !weight || weight <= 0) return;
-  saveWeightEntry(date, weight);
-  document.getElementById('bw-weight').value = '';
-  renderWeightScreen();
+function prevMonth() { calMonth--; if (calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function nextMonth() { calMonth++; if (calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+// ── HISTORY LIST ──
+function formatSet(set, exerciseId) {
+  const ex = EXERCISES.find(e => e.id === exerciseId);
+  if (ex?.muscle === 'warmup') return set.reps>0 ? `${set.reps} sec` : '—';
+  const parts = [];
+  if (set.reps>0)   parts.push(`${set.reps} reps`);
+  if (set.weight>0) parts.push(`${set.weight} kg`);
+  return parts.join(' · ') || '—';
 }
 
-function saveWeightEntry(date, weight) {
-  const weights = DB.getWeights();
-  const idx = weights.findIndex(b => b.date === date);
-  if (idx > -1) weights[idx].weight = weight;
-  else weights.push({ date, weight });
-  DB.saveWeights(weights);
-}
-
-function deleteWeight(date) {
-  DB.saveWeights(DB.getWeights().filter(b => b.date !== date));
-  renderWeightScreen();
-}
-
-// ── HISTORY ──
 function renderHistory() {
+  renderCalendar();
   const sessions = DB.getSessions().slice().reverse();
   const el = document.getElementById('history-list');
-  if (!sessions.length) {
-    el.innerHTML = '<div class="empty-state">No sessions yet</div>';
-    return;
-  }
-  el.innerHTML = sessions.map((s, i) => `
+  if (!sessions.length) { el.innerHTML='<div class="empty-state">No sessions yet</div>'; return; }
+  el.innerHTML = sessions.map((s,i) => `
     <div class="history-item">
       <button class="history-head" onclick="toggleHistory(${i})">
-        <div class="history-head-left" style="flex:1">
+        <div style="flex:1">
           <div class="history-date">${s.date}</div>
-          <div class="history-exes">${s.exercises.map(e => e.zh).join(' · ')}</div>
+          <div class="history-exes">${s.exercises.map(e=>e.zh).join(' · ')}</div>
         </div>
         <div class="history-arrow" id="hist-arrow-${i}">
           <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </div>
       </button>
       <div class="history-detail" id="hist-detail-${i}">
-        ${s.exercises.map(e => `
+        ${s.exercises.map(e=>`
           <div class="hist-ex-block">
             <div class="hist-ex-name">${e.zh}<span>${e.en}</span></div>
-            ${e.sets.map((set, j) => `
+            ${e.sets.map((set,j)=>`
               <div class="hist-set-row">
                 <span class="hist-set-num">Set ${j+1}</span>
-                <span>${set.reps} reps</span>
-                <span>${set.weight} kg</span>
+                <span>${formatSet(set,e.id)}</span>
               </div>`).join('')}
           </div>`).join('')}
+        <button class="hist-del-btn" onclick="deleteSession(${s.timestamp})">Delete this session</button>
       </div>
     </div>`).join('');
 }
@@ -1030,22 +811,28 @@ function renderHistory() {
 function toggleHistory(i) {
   const detail = document.getElementById(`hist-detail-${i}`);
   const arrow  = document.getElementById(`hist-arrow-${i}`);
-  const open   = detail.style.display === 'block';
-  detail.style.display = open ? 'none' : 'block';
-  arrow.style.transform = open ? '' : 'rotate(180deg)';
+  const open   = detail.style.display==='block';
+  detail.style.display = open?'none':'block';
+  arrow.style.transform = open?'':'rotate(180deg)';
+}
+
+function deleteSession(timestamp) {
+  DB.saveSessions(DB.getSessions().filter(s => s.timestamp!==timestamp));
+  renderHistory();
+  showToast('Session deleted');
 }
 
 // ── TOAST ──
-function showToast(msg) {
+function showToast(msg, isPr=false) {
   const t = document.createElement('div');
-  t.className = 'toast';
+  t.className = isPr ? 'toast pr' : 'toast';
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => {
     t.style.transition = 'opacity .3s';
     t.style.opacity = '0';
     setTimeout(() => t.remove(), 300);
-  }, 2000);
+  }, isPr ? 3000 : 2000);
 }
 
 showScreen('home');
