@@ -92,6 +92,9 @@
     .set-row{display:grid;grid-template-columns:48px 1fr 1fr;gap:8px;margin-bottom:8px}
     .set-num{background:var(--primary-light);color:var(--primary);border-radius:8px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
     .set-input{width:100%;padding:10px 6px;text-align:center}
+    .set-actions{display:flex;gap:6px;margin-top:4px;margin-bottom:12px}
+    .set-action-btn{flex:1;height:34px;background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;color:var(--text-2);cursor:pointer;transition:background .12s}
+    .set-action-btn:active{background:var(--border)}
 
     /* ── LOG CARDS ── */
     .log-ex-list{padding:0 20px}
@@ -129,6 +132,11 @@
     .stats-pill small{font-size:10px;font-weight:400;color:var(--text-3);margin-left:2px}
     .del-btn{background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;transition:color .15s;flex-shrink:0}
     .del-btn:hover{color:#c53030}
+
+    /* ── PROGRESS CHART ── */
+    .progress-section{padding:0 20px 16px}
+    .progress-picker{width:100%;padding:10px 12px;margin-bottom:10px;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;color:var(--text-1);outline:none}
+    .progress-chart-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh)}
 
     /* ── HISTORY CALENDAR ── */
     .cal-wrap{padding:0 20px 16px}
@@ -189,6 +197,15 @@
       <canvas id="home-weight-chart" height="64"></canvas>
       <div id="home-weight-empty" style="display:none;font-size:12px;color:var(--text-3);padding:8px 0 4px;text-align:center">記錄體重後顯示 · Log weight to see trend</div>
     </div>
+  </div>
+
+  <div class="cta-wrap">
+    <button class="btn-primary cta-btn" onclick="showScreen('log')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      Start today's workout
+    </button>
   </div>
 
   <div class="section-block">
@@ -306,6 +323,17 @@
     </div>
   </div>
 
+  <div class="progress-section">
+    <div class="section-label">Exercise Progress 動作進步</div>
+    <select id="progress-ex-picker" class="progress-picker" onchange="renderProgressChart()">
+      <option value="">選擇動作 Select exercise…</option>
+    </select>
+    <div class="progress-chart-card">
+      <canvas id="progress-chart" height="80" style="display:none"></canvas>
+      <div id="progress-empty" class="empty-state" style="padding:20px 0;font-size:13px">選擇動作後顯示進步曲線</div>
+    </div>
+  </div>
+
   <div class="history-list" id="history-list"></div>
 </div>
 
@@ -357,8 +385,10 @@ const DB = {
   saveStats:    v  => localStorage.setItem('st_bodystats',   JSON.stringify(v)),
 };
 
-let logState    = {};
-let statCharts  = {};
+let logState      = {};
+let logSetCounts  = {};
+let statCharts    = {};
+let progressChart = null;
 let homeActivityChart = null;
 let homeWeightChart   = null;
 let calYear  = new Date().getFullYear();
@@ -580,6 +610,7 @@ function deleteStats(date) {
 // ── LOG SCREEN ──
 function renderLogScreen() {
   logState = {};
+  logSetCounts = {};
   document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
   const warmup = EXERCISES.filter(e => e.muscle === 'warmup');
   const legs   = EXERCISES.filter(e => e.muscle === 'legs');
@@ -599,7 +630,24 @@ function getLastSets(exerciseId) {
   return null;
 }
 
+function buildSetRow(e, i, last) {
+  const isTimed = e.muscle === 'warmup';
+  if (isTimed) return `<div class="set-row" style="grid-template-columns:48px 1fr">
+    <div class="set-num">Set ${i}</div>
+    <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
+      placeholder="${last && last.reps>0 ? last.reps : 'sec'}" min="0">
+  </div>`;
+  return `<div class="set-row">
+    <div class="set-num">Set ${i}</div>
+    <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
+      placeholder="${last && last.reps>0 ? last.reps : 'reps'}" min="0">
+    <input type="number" class="set-input" id="linput-${e.id}-kg-${i}"
+      placeholder="${last && last.weight>0 ? last.weight : 'kg'}" min="0" step="0.5">
+  </div>`;
+}
+
 function buildLogCard(e) {
+  logSetCounts[e.id] = 3;
   const lastSets = getLastSets(e.id);
   const isTimed  = e.muscle === 'warmup';
 
@@ -616,21 +664,7 @@ function buildLogCard(e) {
     ? `<div class="set-table-head" style="grid-template-columns:48px 1fr"><span>Set</span><span>Sec / Reps</span></div>`
     : `<div class="set-table-head"><span>Set</span><span>Reps</span><span>Weight (kg)<br><span style="font-size:9px;font-weight:400;color:var(--text-3)">雙邊總重</span></span></div>`;
 
-  const rows = [1,2,3].map(i => {
-    const last = lastSets ? lastSets[i-1] : null;
-    if (isTimed) return `<div class="set-row" style="grid-template-columns:48px 1fr">
-      <div class="set-num">Set ${i}</div>
-      <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
-        placeholder="${last && last.reps>0 ? last.reps : 'sec'}" min="0">
-    </div>`;
-    return `<div class="set-row">
-      <div class="set-num">Set ${i}</div>
-      <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
-        placeholder="${last && last.reps>0 ? last.reps : 'reps'}" min="0">
-      <input type="number" class="set-input" id="linput-${e.id}-kg-${i}"
-        placeholder="${last && last.weight>0 ? last.weight : 'kg'}" min="0" step="0.5">
-    </div>`;
-  }).join('');
+  const initialRows = [1,2,3].map(i => buildSetRow(e, i, lastSets ? lastSets[i-1] : null)).join('');
 
   return `
     <div class="log-ex-card" id="logcard-${e.id}">
@@ -645,13 +679,42 @@ function buildLogCard(e) {
         </div>
       </button>
       <div class="log-ex-body">
-        ${hintHtml}${tableHead}${rows}
-        <div style="margin-top:12px">
-          <button class="btn-primary" style="width:100%;height:44px;border-radius:10px;font-size:15px"
-            onclick="saveLogExercise('${e.id}')">Save</button>
+        ${hintHtml}${tableHead}
+        <div id="sets-${e.id}">${initialRows}</div>
+        <div class="set-actions">
+          <button class="set-action-btn" onclick="removeSet('${e.id}')">− Set</button>
+          <button class="set-action-btn" onclick="addSet('${e.id}')">＋ Set</button>
         </div>
+        <button class="btn-primary" style="width:100%;height:44px;border-radius:10px;font-size:15px"
+          onclick="saveLogExercise('${e.id}')">Save</button>
       </div>
     </div>`;
+}
+
+function addSet(id) {
+  const ex = EXERCISES.find(e => e.id === id);
+  logSetCounts[id]++;
+  const i = logSetCounts[id];
+  const container = document.getElementById(`sets-${id}`);
+  const div = document.createElement('div');
+  div.className = 'set-row';
+  if (ex.muscle === 'warmup') {
+    div.style.gridTemplateColumns = '48px 1fr';
+    div.innerHTML = `<div class="set-num">Set ${i}</div>
+      <input type="number" class="set-input" id="linput-${id}-reps-${i}" placeholder="sec" min="0">`;
+  } else {
+    div.innerHTML = `<div class="set-num">Set ${i}</div>
+      <input type="number" class="set-input" id="linput-${id}-reps-${i}" placeholder="reps" min="0">
+      <input type="number" class="set-input" id="linput-${id}-kg-${i}" placeholder="kg" min="0" step="0.5">`;
+  }
+  container.appendChild(div);
+}
+
+function removeSet(id) {
+  if (logSetCounts[id] <= 1) return;
+  const container = document.getElementById(`sets-${id}`);
+  container.removeChild(container.lastElementChild);
+  logSetCounts[id]--;
 }
 
 function toggleLogCard(id) {
@@ -674,11 +737,14 @@ function isPR(exerciseId, newSets) {
 function saveLogExercise(id) {
   const ex      = EXERCISES.find(e => e.id === id);
   const isTimed = ex.muscle === 'warmup';
-  const sets    = [1,2,3].map(i => ({
-    reps:   parseInt(document.getElementById(`linput-${id}-reps-${i}`)?.value) || 0,
-    weight: isTimed ? 0 : (parseFloat(document.getElementById(`linput-${id}-kg-${i}`)?.value) || 0),
-  }));
-  if (!sets.some(s => s.reps>0||s.weight>0)) { showToast('Enter at least one set'); return; }
+  const count   = logSetCounts[id] || 3;
+  const sets    = [];
+  for (let i = 1; i <= count; i++) {
+    const reps   = parseInt(document.getElementById(`linput-${id}-reps-${i}`)?.value) || 0;
+    const weight = isTimed ? 0 : (parseFloat(document.getElementById(`linput-${id}-kg-${i}`)?.value) || 0);
+    if (reps > 0 || weight > 0) sets.push({ reps, weight });
+  }
+  if (!sets.length) { showToast('Enter at least one set'); return; }
 
   const pr = isPR(id, sets);
   logState[id] = { sets, saved:true };
@@ -723,6 +789,51 @@ function finishWorkout() {
   logState = {};
   showToast('Workout saved!');
   showScreen('home');
+}
+
+// ── EXERCISE PROGRESS CHART ──
+function populateProgressPicker() {
+  const picker = document.getElementById('progress-ex-picker');
+  const strengthEx = EXERCISES.filter(e => e.muscle !== 'warmup');
+  picker.innerHTML = `<option value="">選擇動作 Select exercise…</option>` +
+    strengthEx.map(e => `<option value="${e.id}">${e.zh} · ${e.en}</option>`).join('');
+}
+
+function renderProgressChart() {
+  const id     = document.getElementById('progress-ex-picker').value;
+  const canvas = document.getElementById('progress-chart');
+  const empty  = document.getElementById('progress-empty');
+  if (!id) { canvas.style.display='none'; empty.style.display=''; empty.textContent='選擇動作後顯示進步曲線'; return; }
+
+  const sessions = DB.getSessions().sort((a,b) => a.date.localeCompare(b.date));
+  const data = [];
+  for (const s of sessions) {
+    const ex = s.exercises.find(e => e.id === id);
+    if (ex) {
+      const maxW = Math.max(0, ...ex.sets.map(set => set.weight || 0));
+      if (maxW > 0) data.push({ date: s.date, maxW });
+    }
+  }
+
+  if (data.length < 2) {
+    canvas.style.display='none'; empty.style.display='';
+    empty.textContent = data.length === 0 ? '尚無此動作紀錄' : '至少記錄 2 次才能顯示趨勢';
+    return;
+  }
+
+  canvas.style.display=''; empty.style.display='none';
+  if (progressChart) progressChart.destroy();
+  progressChart = new Chart(canvas.getContext('2d'), {
+    type:'line',
+    data:{ labels: data.map(d => d.date.slice(5)),
+      datasets:[{ data: data.map(d => d.maxW), borderColor:'#3B6D11',
+        backgroundColor:'rgba(59,109,17,0.08)', tension:0.3, fill:true,
+        pointBackgroundColor:'#3B6D11', pointRadius:4, borderWidth:2 }] },
+    options:{ responsive:true,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} kg`}}},
+      scales:{ x:{ticks:{color:'#9e9e99',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'},border:{display:false}},
+               y:{ticks:{color:'#9e9e99',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'},border:{display:false}} } }
+  });
 }
 
 // ── HISTORY CALENDAR ──
@@ -779,6 +890,7 @@ function formatSet(set, exerciseId) {
 
 function renderHistory() {
   renderCalendar();
+  populateProgressPicker();
   const sessions = DB.getSessions().slice().reverse();
   const el = document.getElementById('history-list');
   if (!sessions.length) { el.innerHTML='<div class="empty-state">No sessions yet</div>'; return; }
