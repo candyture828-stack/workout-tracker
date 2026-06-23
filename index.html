@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Strength">
-  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
@@ -138,6 +138,13 @@
     .stats-pill small{font-size:10px;font-weight:400;color:var(--text-3);margin-left:2px}
     .del-btn{background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;transition:color .15s;flex-shrink:0}
     .del-btn:hover{color:#c53030}
+    .edit-btn{background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;transition:color .15s;flex-shrink:0}
+    .edit-btn:hover{color:var(--primary)}
+    .hist-action-row{display:flex;gap:8px;border-top:var(--bw) solid var(--border);padding-top:12px;margin-top:4px}
+    .hist-action-btn{flex:1;height:36px;background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:background .12s}
+    .hist-action-btn:active{background:var(--border)}
+    .hist-action-btn.del{color:#c53030}
+    .hist-action-btn.edit{color:var(--primary)}
 
     /* ── PROGRESS CHART ── */
     .progress-section{padding:0 20px 16px}
@@ -172,8 +179,6 @@
     .hist-set-row{display:flex;gap:16px;font-size:13px;color:var(--text-2);margin-bottom:4px}
     .hist-set-num{color:var(--primary);font-weight:600;width:44px}
     .hist-ex-block{margin-bottom:12px}
-    .hist-del-btn{width:100%;background:none;border:none;font-family:inherit;font-size:12px;color:var(--text-3);cursor:pointer;padding:10px 0 2px;text-align:center;transition:color .15s}
-    .hist-del-btn:hover{color:#c53030}
 
     /* ── DATA MANAGEMENT ── */
     .data-mgmt{padding:0 20px 32px;display:flex;gap:8px}
@@ -412,8 +417,9 @@ function saveDraft() {
 function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
 function loadDraft()  { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); }
 
-let logState      = {};
-let logSetCounts  = {};
+let logState        = {};
+let logSetCounts    = {};
+let editingSession  = null;
 let statCharts    = {};
 let progressChart = null;
 let homeActivityChart = null;
@@ -428,6 +434,11 @@ function showScreen(name) {
   document.getElementById('screen-' + name).classList.add('active');
   const nb = document.querySelector(`.nav-btn[data-screen="${name}"]`);
   if (nb) nb.classList.add('active');
+  if (name !== 'log' && editingSession) {
+    editingSession = null;
+    const btn = document.getElementById('finish-workout-btn');
+    if (btn) { btn.textContent = 'Finish Workout'; btn.disabled = true; }
+  }
   if (name === 'home')    renderHome();
   if (name === 'stats')   renderStatsScreen();
   if (name === 'history') renderHistory();
@@ -587,6 +598,11 @@ function renderStatsScreen() {
     return `<div class="stats-entry">
       <div class="stats-entry-date">${b.date}</div>
       <div class="stats-entry-vals">${pills.join('')}</div>
+      <button class="edit-btn" onclick="editStats('${b.date}')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+      </button>
       <button class="del-btn" onclick="deleteStats('${b.date}')">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -634,6 +650,16 @@ function deleteStats(date) {
   renderStatsScreen();
 }
 
+function editStats(date) {
+  const entry = DB.getStats().find(b => b.date === date);
+  if (!entry) return;
+  document.getElementById('bw-date').value   = date;
+  document.getElementById('bw-weight').value = entry.weight ?? '';
+  document.getElementById('bw-fat').value    = entry.fat    ?? '';
+  document.getElementById('bw-muscle').value = entry.muscle ?? '';
+  document.getElementById('bw-date').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
 // ── LOG SCREEN ──
 function restoreExerciseDraft(id, state) {
   const ex = EXERCISES.find(e => e.id === id);
@@ -678,13 +704,15 @@ function renderLogScreen() {
   document.getElementById('log-leg-exercises').innerHTML    = legs.map(buildLogCard).join('');
   document.getElementById('log-upper-exercises').innerHTML  = upper.map(buildLogCard).join('');
 
-  const draft = loadDraft();
-  if (draft) {
-    document.getElementById('log-date').value = draft.date;
-    logState = draft.logState || {};
-    Object.keys(logState).forEach(id => {
-      if (logState[id]?.saved) restoreExerciseDraft(id, logState[id]);
-    });
+  if (!editingSession) {
+    const draft = loadDraft();
+    if (draft) {
+      document.getElementById('log-date').value = draft.date;
+      logState = draft.logState || {};
+      Object.keys(logState).forEach(id => {
+        if (logState[id]?.saved) restoreExerciseDraft(id, logState[id]);
+      });
+    }
   }
   updateLogFooter();
 }
@@ -853,11 +881,20 @@ function finishWorkout() {
   if (!exercises.length) return;
   const chosenDate = document.getElementById('log-date').value || new Date().toLocaleDateString('en-CA');
   const sessions   = DB.getSessions();
-  sessions.push({ date:chosenDate, timestamp:new Date(chosenDate).getTime(), exercises });
+  if (editingSession) {
+    const idx = sessions.findIndex(s => s.timestamp === editingSession);
+    const updated = { date:chosenDate, timestamp:editingSession, exercises };
+    if (idx > -1) sessions[idx] = updated; else sessions.push(updated);
+    editingSession = null;
+    document.getElementById('finish-workout-btn').textContent = 'Finish Workout';
+    showToast('Session updated!');
+  } else {
+    sessions.push({ date:chosenDate, timestamp:Date.now(), exercises });
+    showToast('Workout saved!');
+  }
   DB.saveSessions(sessions);
   logState = {};
   clearDraft();
-  showToast('Workout saved!');
   showScreen('home');
 }
 
@@ -985,7 +1022,10 @@ function renderHistory() {
                 <span>${formatSet(set,e.id)}</span>
               </div>`).join('')}
           </div>`).join('')}
-        <button class="hist-del-btn" onclick="deleteSession(${s.timestamp})">Delete this session</button>
+        <div class="hist-action-row">
+          <button class="hist-action-btn edit" onclick="editSession(${s.timestamp})">Edit</button>
+          <button class="hist-action-btn del" onclick="deleteSession(${s.timestamp})">Delete</button>
+        </div>
       </div>
     </div>`).join('');
 }
@@ -1002,6 +1042,20 @@ function deleteSession(timestamp) {
   DB.saveSessions(DB.getSessions().filter(s => s.timestamp!==timestamp));
   renderHistory();
   showToast('Session deleted');
+}
+
+function editSession(timestamp) {
+  const session = DB.getSessions().find(s => s.timestamp === timestamp);
+  if (!session) return;
+  editingSession = timestamp;
+  showScreen('log');
+  document.getElementById('log-date').value = session.date;
+  session.exercises.forEach(ex => {
+    logState[ex.id] = { sets: ex.sets, saved: true };
+    restoreExerciseDraft(ex.id, { sets: ex.sets });
+  });
+  updateLogFooter();
+  document.getElementById('finish-workout-btn').textContent = 'Update Workout';
 }
 
 // ── DATA EXPORT / IMPORT ──
