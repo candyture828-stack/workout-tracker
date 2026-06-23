@@ -1,0 +1,18 @@
+{
+  "name": "Strength Tracker",
+  "short_name": "Strength",
+  "description": "Personal strength training & body stats tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f8f6",
+  "theme_color": "#3B6D11",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
