@@ -169,6 +169,11 @@
     .hist-del-btn{width:100%;background:none;border:none;font-family:inherit;font-size:12px;color:var(--text-3);cursor:pointer;padding:10px 0 2px;text-align:center;transition:color .15s}
     .hist-del-btn:hover{color:#c53030}
 
+    /* ── DATA MANAGEMENT ── */
+    .data-mgmt{padding:0 20px 32px;display:flex;gap:8px}
+    .data-btn{flex:1;height:40px;background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--text-2);cursor:pointer;font-weight:500;transition:background .12s}
+    .data-btn:active{background:var(--border)}
+
     /* ── TOAST ── */
     .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-1);color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;z-index:500;pointer-events:none;white-space:nowrap;box-shadow:var(--sh-md)}
     .toast.pr{background:var(--primary)}
@@ -335,6 +340,12 @@
   </div>
 
   <div class="history-list" id="history-list"></div>
+
+  <div style="padding:24px 20px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)">資料備份 Data Backup</div>
+  <div class="data-mgmt">
+    <button class="data-btn" onclick="exportData()">⬆ 匯出 Export</button>
+    <button class="data-btn" onclick="importData()">⬇ 匯入 Import</button>
+  </div>
 </div>
 
 <!-- ── BOTTOM NAV ── -->
@@ -363,7 +374,8 @@ const EXERCISES = [
   { id:'deadbug',       en:'Dead Bug',                zh:'死蟲式',            muscle:'warmup' },
   { id:'windmill',      en:'Single-Leg Windmill',     zh:'單腳風車',          muscle:'warmup' },
   { id:'catcow',        en:'Cat-Cow',                 zh:'貓牛式',            muscle:'warmup' },
-  { id:'romanchairext', en:'Roman Chair Extension',   zh:'羅馬椅',            muscle:'warmup' },
+  { id:'romanchairext', en:'Roman Chair Back Extension', zh:'羅馬椅背伸',      muscle:'warmup' },
+  { id:'romanchairside',en:'Roman Chair Side Bend',     zh:'羅馬椅側屈',      muscle:'warmup' },
   { id:'backsquat',     en:'Back Squat',              zh:'背槓深蹲',          muscle:'legs'   },
   { id:'hacksquat',     en:'Hack Squat',              zh:'哈客深蹲',          muscle:'legs'   },
   { id:'splitsquat',    en:'Split Squat',             zh:'分腿蹲',            muscle:'legs'   },
@@ -376,6 +388,7 @@ const EXERCISES = [
   { id:'shoulderpress', en:'Shoulder Press',          zh:'啞鈴・機械肩推',    muscle:'upper'  },
   { id:'straightarm',   en:'Straight Arm Pulldown',   zh:'直臂下壓',          muscle:'upper'  },
   { id:'pulldown',      en:'Lat Pulldown',            zh:'滑輪下拉',          muscle:'upper'  },
+  { id:'pullup',        en:'Pull-Up',                 zh:'引體向上',          muscle:'upper'  },
 ];
 
 const DB = {
@@ -384,6 +397,14 @@ const DB = {
   getStats:     () => JSON.parse(localStorage.getItem('st_bodystats')   || '[]'),
   saveStats:    v  => localStorage.setItem('st_bodystats',   JSON.stringify(v)),
 };
+
+const DRAFT_KEY = 'st_draft';
+function saveDraft() {
+  const date = document.getElementById('log-date')?.value || new Date().toLocaleDateString('en-CA');
+  localStorage.setItem(DRAFT_KEY, JSON.stringify({ date, logState }));
+}
+function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
+function loadDraft()  { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); }
 
 let logState      = {};
 let logSetCounts  = {};
@@ -608,6 +629,38 @@ function deleteStats(date) {
 }
 
 // ── LOG SCREEN ──
+function restoreExerciseDraft(id, state) {
+  const ex = EXERCISES.find(e => e.id === id);
+  if (!ex) return;
+  const isTimed = ex.muscle === 'warmup';
+  const sets = state.sets || [];
+  logSetCounts[id] = sets.length;
+  const container = document.getElementById(`sets-${id}`);
+  if (container) {
+    container.innerHTML = sets.map((s, i) => buildSetRow(ex, i+1, null)).join('');
+    sets.forEach((s, idx) => {
+      const i = idx + 1;
+      const repsEl = document.getElementById(`linput-${id}-reps-${i}`);
+      if (repsEl && s.reps > 0) repsEl.value = s.reps;
+      if (!isTimed) {
+        const kgEl = document.getElementById(`linput-${id}-kg-${i}`);
+        if (kgEl && s.weight > 0) kgEl.value = s.weight;
+      }
+    });
+  }
+  const card = document.getElementById(`logcard-${id}`);
+  if (card) card.classList.add('saved');
+  const nonEmpty = sets.filter(s => s.reps > 0 || s.weight > 0);
+  const maxW = Math.max(0, ...sets.map(s => s.weight || 0));
+  const summaryEl = document.getElementById(`saved-summary-${id}`);
+  if (summaryEl) {
+    summaryEl.textContent = isTimed
+      ? `${nonEmpty.length} set${nonEmpty.length!==1?'s':''} logged`
+      : `${nonEmpty.length} set${nonEmpty.length!==1?'s':''}${maxW>0 ? ` · max ${maxW} kg` : ''}`;
+    summaryEl.style.display = '';
+  }
+}
+
 function renderLogScreen() {
   logState = {};
   logSetCounts = {};
@@ -618,6 +671,15 @@ function renderLogScreen() {
   document.getElementById('log-warmup-exercises').innerHTML = warmup.map(buildLogCard).join('');
   document.getElementById('log-leg-exercises').innerHTML    = legs.map(buildLogCard).join('');
   document.getElementById('log-upper-exercises').innerHTML  = upper.map(buildLogCard).join('');
+
+  const draft = loadDraft();
+  if (draft) {
+    document.getElementById('log-date').value = draft.date;
+    logState = draft.logState || {};
+    Object.keys(logState).forEach(id => {
+      if (logState[id]?.saved) restoreExerciseDraft(id, logState[id]);
+    });
+  }
   updateLogFooter();
 }
 
@@ -763,6 +825,7 @@ function saveLogExercise(id) {
     summaryEl.style.display = '';
   }
 
+  saveDraft();
   if (pr) showToast('🏆 新個人紀錄 New PR!', true);
   updateLogFooter();
 }
@@ -787,6 +850,7 @@ function finishWorkout() {
   sessions.push({ date:chosenDate, timestamp:new Date(chosenDate).getTime(), exercises });
   DB.saveSessions(sessions);
   logState = {};
+  clearDraft();
   showToast('Workout saved!');
   showScreen('home');
 }
@@ -932,6 +996,40 @@ function deleteSession(timestamp) {
   DB.saveSessions(DB.getSessions().filter(s => s.timestamp!==timestamp));
   renderHistory();
   showToast('Session deleted');
+}
+
+// ── DATA EXPORT / IMPORT ──
+function exportData() {
+  const payload = JSON.stringify({
+    sessions: DB.getSessions(),
+    stats:    DB.getStats(),
+  });
+  navigator.clipboard.writeText(payload)
+    .then(() => showToast('資料已複製到剪貼簿 Copied!'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = payload;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      showToast('資料已複製到剪貼簿 Copied!');
+    });
+}
+
+function importData() {
+  const raw = prompt('貼上備份資料 Paste backup data:');
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data.sessions) || !Array.isArray(data.stats)) throw new Error();
+    DB.saveSessions(data.sessions);
+    DB.saveStats(data.stats);
+    renderHistory();
+    showToast(`匯入完成 Imported: ${data.sessions.length} sessions`);
+  } catch {
+    showToast('格式錯誤 Invalid data');
+  }
 }
 
 // ── TOAST ──
