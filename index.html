@@ -146,6 +146,36 @@
     .hist-action-btn.del{color:#c53030}
     .hist-action-btn.edit{color:var(--primary)}
 
+    /* ── DAILY SCREEN ── */
+    input[type=time]{font-family:inherit;background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:8px;color:var(--text-1);font-size:15px;outline:none;padding:10px 8px;width:100%;text-align:center}
+    input[type=time]:focus{border-color:var(--primary)}
+    .daily-section{padding:0 20px 16px}
+    .water-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+    .water-display{text-align:center;margin-bottom:12px}
+    .water-ml{font-size:36px;font-weight:700;color:#0EA5E9}
+    .water-ml small{font-size:14px;font-weight:400;color:var(--text-3);margin-left:2px}
+    .water-goal-text{font-size:12px;color:var(--text-3);margin-top:2px}
+    .water-track{height:8px;background:var(--surface-2);border-radius:100px;margin-bottom:14px;overflow:hidden}
+    .water-fill{height:100%;background:#0EA5E9;border-radius:100px;transition:width .3s}
+    .water-quick-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+    .water-quick-btn{height:38px;background:rgba(14,165,233,0.1);border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;color:#0EA5E9;cursor:pointer}
+    .water-quick-btn:active{background:rgba(14,165,233,0.2)}
+    .water-reset-btn{width:100%;height:32px;background:none;border:var(--bw) solid var(--border);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text-3);cursor:pointer;margin-top:4px}
+    .sleep-form-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);margin-bottom:10px}
+    .sleep-time-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}
+    .sleep-time-lbl{font-size:10px;color:var(--text-3);text-align:center;margin-top:4px}
+    .sleep-duration-display{text-align:center;font-size:13px;font-weight:600;color:var(--primary);min-height:20px;margin:8px 0}
+    .quality-row{display:flex;gap:6px;margin:10px 0 12px}
+    .quality-pill{flex:1;height:36px;background:var(--surface-2);border:var(--bw) solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .12s;color:var(--text-2)}
+    .quality-pill.active{background:#7C3AED;color:#fff;border-color:#7C3AED}
+    .sleep-chart-card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);margin-bottom:10px}
+    .sleep-chart-label{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:10px}
+    .sleep-entry{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);margin-bottom:6px;box-shadow:var(--sh)}
+    .sleep-entry-date{font-size:12px;color:var(--text-2);width:86px;flex-shrink:0}
+    .sleep-entry-info{flex:1}
+    .sleep-entry-hrs{font-size:14px;font-weight:600}
+    .sleep-entry-sub{font-size:11px;color:var(--text-3);margin-top:2px}
+
     /* ── PROGRESS CHART ── */
     .progress-section{padding:0 20px 16px}
     .progress-picker{width:100%;padding:10px 12px;margin-bottom:10px;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;color:var(--text-1);outline:none}
@@ -360,6 +390,72 @@
   <div style="height:calc(var(--nav-h) + 24px)"></div>
 </div>
 
+<!-- ── DAILY ── -->
+<div id="screen-daily" class="screen">
+  <div class="screen-header" style="padding-bottom:12px">
+    <div>
+      <div class="screen-title">Daily 日常</div>
+      <div class="screen-sub">Water · Sleep</div>
+    </div>
+  </div>
+
+  <!-- Water -->
+  <div class="daily-section">
+    <div class="section-label">今日水分 Water Today</div>
+    <div class="water-card">
+      <div class="water-display">
+        <div class="water-ml"><span id="water-amount">0</span><small>ml</small></div>
+        <div class="water-goal-text">目標 / 2000 ml</div>
+      </div>
+      <div class="water-track"><div class="water-fill" id="water-fill" style="width:0%"></div></div>
+      <div class="water-quick-btns">
+        <button class="water-quick-btn" onclick="addWater(250)">+250</button>
+        <button class="water-quick-btn" onclick="addWater(500)">+500</button>
+        <button class="water-quick-btn" onclick="addWater(750)">+750</button>
+        <button class="water-quick-btn" onclick="addWater(1000)">+1L</button>
+      </div>
+      <button class="water-reset-btn" onclick="resetWater()">Reset today</button>
+    </div>
+  </div>
+
+  <!-- Sleep -->
+  <div class="daily-section">
+    <div class="section-label">睡眠記錄 Sleep</div>
+    <div class="sleep-form-card">
+      <input type="date" id="sleep-date" style="width:100%;padding:10px 12px;margin-bottom:4px">
+      <div class="sleep-time-row">
+        <div>
+          <input type="time" id="sleep-bed" oninput="updateSleepDuration()">
+          <div class="sleep-time-lbl">就寢 Bedtime</div>
+        </div>
+        <div>
+          <input type="time" id="sleep-wake" oninput="updateSleepDuration()">
+          <div class="sleep-time-lbl">起床 Wake up</div>
+        </div>
+      </div>
+      <div class="sleep-duration-display" id="sleep-duration-display"></div>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">睡眠品質 Quality</div>
+      <div class="quality-row" id="quality-row">
+        <button class="quality-pill" onclick="setQuality(1)">1</button>
+        <button class="quality-pill" onclick="setQuality(2)">2</button>
+        <button class="quality-pill" onclick="setQuality(3)">3</button>
+        <button class="quality-pill" onclick="setQuality(4)">4</button>
+        <button class="quality-pill" onclick="setQuality(5)">5</button>
+      </div>
+      <button class="btn-primary" style="width:100%;height:44px;border-radius:10px;font-size:15px" onclick="logSleep()">Log Sleep</button>
+    </div>
+
+    <div class="sleep-chart-card">
+      <div class="sleep-chart-label">睡眠時數趨勢 Sleep Duration</div>
+      <canvas id="sleep-chart" height="80" style="display:none"></canvas>
+      <div id="sleep-chart-empty" style="font-size:12px;color:var(--text-3);text-align:center;padding:12px 0">Log 2+ nights to see trend</div>
+    </div>
+
+    <div id="sleep-list"></div>
+    <div style="height:calc(var(--nav-h) + 24px)"></div>
+  </div>
+</div>
+
 <!-- ── BOTTOM NAV ── -->
 <nav class="bottom-nav">
   <button class="nav-btn active" data-screen="home" onclick="showScreen('home')">
@@ -369,6 +465,10 @@
   <button class="nav-btn" data-screen="log" onclick="showScreen('log')">
     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
     Exercise
+  </button>
+  <button class="nav-btn" data-screen="daily" onclick="showScreen('daily')">
+    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+    Daily
   </button>
   <button class="nav-btn" data-screen="stats" onclick="showScreen('stats')">
     <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -413,6 +513,8 @@ const DB = {
   saveSessions: v  => localStorage.setItem('st_sessions',    JSON.stringify(v)),
   getStats:     () => JSON.parse(localStorage.getItem('st_bodystats')   || '[]'),
   saveStats:    v  => localStorage.setItem('st_bodystats',   JSON.stringify(v)),
+  getDaily:     () => JSON.parse(localStorage.getItem('st_daily')       || '[]'),
+  saveDaily:    v  => localStorage.setItem('st_daily',       JSON.stringify(v)),
 };
 
 const DRAFT_KEY = 'st_draft';
@@ -426,6 +528,8 @@ function loadDraft()  { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'nu
 let logState        = {};
 let logSetCounts    = {};
 let editingSession  = null;
+let sleepQuality    = null;
+let sleepChart      = null;
 let statCharts    = {};
 let progressChart = null;
 let homeActivityChart = null;
@@ -449,6 +553,7 @@ function showScreen(name) {
   if (name === 'stats')   renderStatsScreen();
   if (name === 'history') renderHistory();
   if (name === 'log')     renderLogScreen();
+  if (name === 'daily')   renderDailyScreen();
 }
 
 function getGreeting() {
@@ -1062,6 +1167,142 @@ function editSession(timestamp) {
   });
   updateLogFooter();
   document.getElementById('finish-workout-btn').textContent = 'Update Workout';
+}
+
+// ── DAILY SCREEN ──
+function getDailyEntry(date) {
+  return DB.getDaily().find(d => d.date === date) || { date, water: 0 };
+}
+
+function saveDailyEntry(date, updates) {
+  const all = DB.getDaily();
+  const idx = all.findIndex(d => d.date === date);
+  if (idx > -1) Object.assign(all[idx], updates);
+  else all.push({ date, ...updates });
+  DB.saveDaily(all);
+}
+
+function addWater(ml) {
+  const today = new Date().toLocaleDateString('en-CA');
+  const entry = getDailyEntry(today);
+  saveDailyEntry(today, { water: (entry.water || 0) + ml });
+  renderWater();
+}
+
+function resetWater() {
+  const today = new Date().toLocaleDateString('en-CA');
+  saveDailyEntry(today, { water: 0 });
+  renderWater();
+}
+
+function renderWater() {
+  const today = new Date().toLocaleDateString('en-CA');
+  const entry = getDailyEntry(today);
+  const water = entry.water || 0;
+  const pct   = Math.min(100, Math.round(water / 2000 * 100));
+  document.getElementById('water-amount').textContent = water;
+  document.getElementById('water-fill').style.width   = pct + '%';
+}
+
+function setQuality(n) {
+  sleepQuality = n;
+  document.querySelectorAll('.quality-pill').forEach((btn, i) => {
+    btn.classList.toggle('active', i + 1 === n);
+  });
+}
+
+function calcSleepHours(bed, wake) {
+  const [bh, bm] = bed.split(':').map(Number);
+  const [wh, wm] = wake.split(':').map(Number);
+  let mins = (wh * 60 + wm) - (bh * 60 + bm);
+  if (mins < 0) mins += 24 * 60;
+  return Math.round(mins / 6) / 10;
+}
+
+function updateSleepDuration() {
+  const bed  = document.getElementById('sleep-bed').value;
+  const wake = document.getElementById('sleep-wake').value;
+  const el   = document.getElementById('sleep-duration-display');
+  if (bed && wake) {
+    const hrs = calcSleepHours(bed, wake);
+    el.textContent = `${hrs} hrs`;
+  } else {
+    el.textContent = '';
+  }
+}
+
+function logSleep() {
+  const date = document.getElementById('sleep-date').value;
+  const bed  = document.getElementById('sleep-bed').value;
+  const wake = document.getElementById('sleep-wake').value;
+  if (!date || !bed || !wake) { showToast('Fill in date and times'); return; }
+  const hours = calcSleepHours(bed, wake);
+  saveDailyEntry(date, { sleep: { bedtime: bed, waketime: wake, hours, quality: sleepQuality } });
+  document.getElementById('sleep-bed').value  = '';
+  document.getElementById('sleep-wake').value = '';
+  document.getElementById('sleep-duration-display').textContent = '';
+  sleepQuality = null;
+  document.querySelectorAll('.quality-pill').forEach(b => b.classList.remove('active'));
+  renderSleepSection();
+  showToast('Sleep logged!');
+}
+
+function deleteSleep(date) {
+  const all = DB.getDaily();
+  const idx = all.findIndex(d => d.date === date);
+  if (idx > -1) { delete all[idx].sleep; if (!all[idx].water) all.splice(idx, 1); }
+  DB.saveDaily(all);
+  renderSleepSection();
+}
+
+function renderSleepSection() {
+  const all     = DB.getDaily().filter(d => d.sleep).sort((a,b) => a.date.localeCompare(b.date));
+  const canvas  = document.getElementById('sleep-chart');
+  const empty   = document.getElementById('sleep-chart-empty');
+  const recent  = all.slice(-14);
+
+  if (recent.length >= 2) {
+    canvas.style.display = ''; empty.style.display = 'none';
+    if (sleepChart) sleepChart.destroy();
+    sleepChart = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: { labels: recent.map(d => d.date.slice(5)),
+        datasets: [{ data: recent.map(d => d.sleep.hours),
+          backgroundColor: recent.map(d => d.sleep.hours >= 7 ? 'rgba(124,58,237,0.7)' : 'rgba(124,58,237,0.35)'),
+          borderRadius: 4, borderSkipped: false }] },
+      options: { responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.parsed.y} hrs` } } },
+        scales: { x: { ticks: { color: '#9e9e99', font: { size: 9 } }, grid: { display: false }, border: { display: false } },
+                  y: { display: false, min: 0, max: 12 } } }
+    });
+  } else {
+    canvas.style.display = 'none'; empty.style.display = '';
+  }
+
+  const list = document.getElementById('sleep-list');
+  if (!all.length) { list.innerHTML = ''; return; }
+  list.innerHTML = all.slice().reverse().slice(0, 20).map(d => {
+    const s = d.sleep;
+    const qualityStr = s.quality ? ` · ${s.quality}/5` : '';
+    return `<div class="sleep-entry">
+      <div class="sleep-entry-date">${d.date}</div>
+      <div class="sleep-entry-info">
+        <div class="sleep-entry-hrs">${s.hours} hrs${qualityStr}</div>
+        <div class="sleep-entry-sub">${s.bedtime} → ${s.waketime}</div>
+      </div>
+      <button class="del-btn" onclick="deleteSleep('${d.date}')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderDailyScreen() {
+  document.getElementById('sleep-date').value = new Date().toISOString().split('T')[0];
+  renderWater();
+  renderSleepSection();
 }
 
 // ── DATA EXPORT / IMPORT ──
