@@ -382,19 +382,24 @@
 
 <script>
 const EXERCISES = [
-  { id:'sideplank',     en:'Side Plank',             zh:'側棒式',            muscle:'warmup' },
-  { id:'deadbug',       en:'Dead Bug',                zh:'死蟲式',            muscle:'warmup' },
-  { id:'windmill',      en:'Single-Leg Windmill',     zh:'單腳風車',          muscle:'warmup' },
+  { id:'sideplank',     en:'Side Plank Leg Raise',    zh:'側棒式抬腿',        muscle:'warmup' },
+  { id:'clamshell',     en:'Clamshell',               zh:'蛤蠣式',            muscle:'warmup' },
+  { id:'deadbug',       en:'Dead Bug',                zh:'死蟲式',            muscle:'warmup', weighted:true },
+  { id:'windmill',      en:'Standing Windmill',       zh:'站姿風車',          muscle:'warmup' },
+  { id:'windmill_kneel',en:'Half-Kneeling Windmill',  zh:'單腳跪姿風車',      muscle:'warmup' },
+  { id:'windmill_hiprot',en:'Single-Leg Hip Rotation',zh:'單腳髖旋轉',        muscle:'warmup' },
   { id:'catcow',        en:'Cat-Cow',                 zh:'貓牛式',            muscle:'warmup' },
   { id:'romanchairext', en:'Roman Chair Back Extension', zh:'羅馬椅背伸',      muscle:'warmup' },
   { id:'romanchairside',en:'Roman Chair Side Bend',     zh:'羅馬椅側屈',      muscle:'warmup' },
+  { id:'stepdown_goblet',en:'Goblet Step-Down',        zh:'高腳杯負重單腳下階',muscle:'warmup', weighted:true },
   { id:'backsquat',     en:'Back Squat',              zh:'背槓深蹲',          muscle:'legs'   },
   { id:'hacksquat',     en:'Hack Squat',              zh:'哈客深蹲',          muscle:'legs'   },
   { id:'splitsquat',    en:'Split Squat',             zh:'分腿蹲',            muscle:'legs'   },
   { id:'stepup',        en:'Step Up',                 zh:'單腳登階',          muscle:'legs'   },
   { id:'rdl',           en:'Barbell RDL',             zh:'槓鈴 RDL',          muscle:'legs'   },
   { id:'bstance',       en:'B-Stance Deadlift',       zh:'B Stance 對側硬舉', muscle:'legs'   },
-  { id:'chestpress',    en:'Chest Press',             zh:'啞鈴・機械胸推',    muscle:'upper'  },
+  { id:'chestpress',    en:'Dumbbell Chest Press',    zh:'啞鈴胸推',          muscle:'upper'  },
+  { id:'chestpress_mach',en:'Machine Chest Press',   zh:'機械胸推',          muscle:'upper'  },
   { id:'incline',       en:'Incline Press',           zh:'槓鈴・啞鈴上胸推',  muscle:'upper'  },
   { id:'cablerow',      en:'Cable Row',               zh:'Cable 划船',        muscle:'upper'  },
   { id:'shoulderpress', en:'Shoulder Press',          zh:'啞鈴・機械肩推',    muscle:'upper'  },
@@ -665,7 +670,7 @@ function editStats(date) {
 function restoreExerciseDraft(id, state) {
   const ex = EXERCISES.find(e => e.id === id);
   if (!ex) return;
-  const isTimed = ex.muscle === 'warmup';
+  const isTimed = ex.muscle === 'warmup' && !ex.weighted;
   const sets = state.sets || [];
   logSetCounts[id] = sets.length;
   const container = document.getElementById(`sets-${id}`);
@@ -728,7 +733,7 @@ function getLastSets(exerciseId) {
 }
 
 function buildSetRow(e, i, last) {
-  const isTimed = e.muscle === 'warmup';
+  const isTimed = e.muscle === 'warmup' && !e.weighted;
   if (isTimed) return `<div class="set-row" style="grid-template-columns:48px 1fr">
     <div class="set-num">Set ${i}</div>
     <input type="number" class="set-input" id="linput-${e.id}-reps-${i}"
@@ -746,7 +751,7 @@ function buildSetRow(e, i, last) {
 function buildLogCard(e) {
   logSetCounts[e.id] = 3;
   const lastSets = getLastSets(e.id);
-  const isTimed  = e.muscle === 'warmup';
+  const isTimed  = e.muscle === 'warmup' && !e.weighted;
 
   let hintHtml = '';
   if (lastSets && lastSets.some(s => s.reps > 0 || s.weight > 0)) {
@@ -795,7 +800,7 @@ function addSet(id) {
   const container = document.getElementById(`sets-${id}`);
   const div = document.createElement('div');
   div.className = 'set-row';
-  if (ex.muscle === 'warmup') {
+  if (ex.muscle === 'warmup' && !ex.weighted) {
     div.style.gridTemplateColumns = '48px 1fr';
     div.innerHTML = `<div class="set-num">Set ${i}</div>
       <input type="number" class="set-input" id="linput-${id}-reps-${i}" placeholder="sec" min="0">`;
@@ -833,7 +838,7 @@ function isPR(exerciseId, newSets) {
 
 function saveLogExercise(id) {
   const ex      = EXERCISES.find(e => e.id === id);
-  const isTimed = ex.muscle === 'warmup';
+  const isTimed = ex.muscle === 'warmup' && !ex.weighted;
   const count   = logSetCounts[id] || 3;
   const sets    = [];
   for (let i = 1; i <= count; i++) {
@@ -989,7 +994,7 @@ function nextMonth() { calMonth++; if (calMonth>11){calMonth=0;calYear++;} rende
 // ── HISTORY LIST ──
 function formatSet(set, exerciseId) {
   const ex = EXERCISES.find(e => e.id === exerciseId);
-  if (ex?.muscle === 'warmup') return set.reps>0 ? `${set.reps} sec` : '—';
+  if (ex?.muscle === 'warmup' && !ex.weighted) return set.reps>0 ? `${set.reps} sec` : '—';
   const parts = [];
   if (set.reps>0)   parts.push(`${set.reps} reps`);
   if (set.weight>0) parts.push(`${set.weight} kg`);
